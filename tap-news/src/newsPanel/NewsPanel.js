@@ -1,0 +1,1 @@
+import "./NewsPanel.css";
