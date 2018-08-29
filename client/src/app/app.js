@@ -7,7 +7,7 @@ class App extends Component {
   render() {
     return (
         <div>
-            <Nabbar />
+            { /* <Nabbar />*/ }
             <img className='logo' src={logo} alt='logo' />
             <div className='container'></div>
         </div>
