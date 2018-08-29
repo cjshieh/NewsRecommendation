@@ -1,7 +1,8 @@
 import './app.css';
-import logo from './Logo.png';
-import Nabbar from '../navbar/navbar';
+import logo from '../assets/Logo.png';
+// import Nabbar from '../navbar/navbar';
 import React, { Component } from "react";
+import NewsPanel from '../newsPanel/newsPanel';
 
 class App extends Component {
   render() {
@@ -9,7 +10,9 @@ class App extends Component {
         <div>
             { /* <Nabbar />*/ }
             <img className='logo' src={logo} alt='logo' />
-            <div className='container'></div>
+            <div className='container'>
+              <NewsPanel />
+            </div>
         </div>
     );
   }

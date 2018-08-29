@@ -1,6 +1,6 @@
-import './NewsPanel.css';
+import './newsPanel.css';
 import React from 'react';
-import NewsCard from '../NewsCard/NewsCard';
+import NewsCard from '../newsCard/newsCard';
 import _ from 'lodash';
 
 class NewsPanel extends React.Component {

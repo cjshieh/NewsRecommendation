@@ -1,5 +1,5 @@
 import React from 'react';
-import './NewsCard.css';
+import './newsCard.css';
 
 class NewsCard extends React.Component {
   redirectToUrl(url) {
