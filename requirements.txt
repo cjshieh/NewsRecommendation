@@ -1,8 +1,10 @@
 newspaper3k
+numpy
 pika
 python-dateutil
 python-jsonrpc
 pymongo
 redis
 requests
+SciPy
 sklearn
