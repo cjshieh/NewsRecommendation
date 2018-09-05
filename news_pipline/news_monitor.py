@@ -49,7 +49,7 @@ while True:
     for news in news_list:
         # news_digest = hashlib.md5(news['title'].encode(
             # 'utf-8')).digest().encode('base64')
-        enc_key = hashlib.md5(news['title']).digest()
+        enc_key = hashlib.md5(news['title'].encode('utf-8')).digest()
         news_digest = b64encode(enc_key).decode('utf-8')
 
         if redis_client.get(news_digest) is None:
