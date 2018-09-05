@@ -1,3 +1,4 @@
+from base64 import b64encode
 import datetime
 import hashlib
 import inspect
@@ -19,7 +20,6 @@ NEWS_TIME_OUT_IN_SECONDS = 3600 * 24 * 3
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 
-# TODO: use your own queue
 SCRAPE_NEWS_TASK_QUEUE_URL = "amqp://rurhenzz:d-baqsTGTIHBRBcJONCV31w5Lu_Byl7N@dinosaur.rmq.cloudamqp.com/rurhenzz"
 SCRAPE_NEWS_TASK_QUEUE_NAME = "scrape_news_task"
 
@@ -47,8 +47,10 @@ while True:
     num_of_news_news = 0
 
     for news in news_list:
-        news_digest = hashlib.md5(news['title'].encode(
-            'utf-8')).digest().encode('base64')
+        # news_digest = hashlib.md5(news['title'].encode(
+            # 'utf-8')).digest().encode('base64')
+        enc_key = hashlib.md5(news['title']).digest()
+        news_digest = b64encode(enc_key).decode('utf-8')
 
         if redis_client.get(news_digest) is None:
             num_of_news_news = num_of_news_news + 1
@@ -63,6 +65,6 @@ while True:
 
             cloudAMQP_client.sendMessage(news)
 
-    print "Fetched %d news." % num_of_news_news
+    print("Fetched %d news." % num_of_news_news)
 
     cloudAMQP_client.sleep(SLEEP_TIME_IN_SECONDS)

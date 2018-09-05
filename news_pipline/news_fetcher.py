@@ -30,8 +30,8 @@ def handle_message(message):
     article = Article(task['url'])
     article.download()
     article.parse()
-
-    task['text'] = article.text.encode('utf-8')
+    # print(article.text.encode('utf-8'))
+    task['text'] = article.text
 
     dedupe_news_queue_client.sendMessage(task)
 
