@@ -24,7 +24,8 @@ def getNewsFromSource(sources=DEFAULT_SOURECES):
 
     payload = {
         'apiKey': NEW_API_KEY,
-        'sources': concatSources(sources)
+        'sources': concatSources(sources),
+        'pageSize': '100'
     }
     response = requests.get(buildURL(), params=payload)
     res_json = loads(response.content)
