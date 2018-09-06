@@ -30,7 +30,7 @@ class CloudAMQPClient:
             self.channel.basic_ack(method_frame.delivery_tag)
             return json.loads(body)
         else:
-            print("No message returned.")
+            print("No message returned from %s." % (self.queue_name))
             # Same as return null
             return None
 
