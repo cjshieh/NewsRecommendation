@@ -27,9 +27,12 @@ NEWS_SOURCES = [
     'bbc-news',
     'bbc-sport',
     'bloomberg',
+    'business-insider',
     'cnn',
     'entertainment-weekly',
     'espn',
+    'fox-news',
+    'fox-sports',
     'ign',
     'techcrunch',
     'the-new-york-times',
@@ -37,12 +40,22 @@ NEWS_SOURCES = [
     'the-washington-post'
 ]
 
+NEWS_CATEGORIES = [
+    'business',
+    'entertainment',
+    'general',
+    'health',
+    'science',
+    'sports',
+    'technology'
+]
+
 redis_client = redis.StrictRedis(REDIS_HOST, REDIS_PORT)
 cloudAMQP_client = CloudAMQPClient(
     SCRAPE_NEWS_TASK_QUEUE_URL, SCRAPE_NEWS_TASK_QUEUE_NAME)
 
 while True:
-    news_list = news_api_client.getNewsFromSource(NEWS_SOURCES)
+    news_list = news_api_client.getNewsFromCategory(NEWS_CATEGORIES)
 
     num_of_news_news = 0
 

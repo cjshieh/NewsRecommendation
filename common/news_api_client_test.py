@@ -17,9 +17,14 @@ def test_basic():
         'the-wall-street-journal',
         'the-washington-post'
     ]
-    print(news)
+    news_category = client.getNewsFromCategory()
+    NEWS_CATEGORY = ['general', 'sports']
+    # print(news)
+    print(news_category)
     assert len(news) > 0
     news = client.getNewsFromSource(sources=NEWS_SOURCES)
+    assert len(news) > 0
+    news = client.getNewsFromCategory(categories=NEWS_CATEGORY)
     assert len(news) > 0
     print('[x] test basic new_api passed!')
 
