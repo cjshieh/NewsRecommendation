@@ -56,7 +56,7 @@ cloudAMQP_client = CloudAMQPClient(
 
 while True:
     news_list = news_api_client.getNewsFromCategory(NEWS_CATEGORIES)
-
+    # news_list = news_api_client.getNewsFromSource(NEWS_SOURCES)
     num_of_news_news = 0
 
     for news in news_list:
