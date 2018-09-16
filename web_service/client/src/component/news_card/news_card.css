@@ -1,0 +1,43 @@
+.fade {
+  position: relative;
+  overflow: hidden;
+  height: 2.4em; /* exactly three lines */
+}
+
+.fade:after {
+  content: "";
+  text-align: right;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 50%;
+  height: 1.2em;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 1) 60%
+  );
+}
+
+.ui.card > .image, .ui.cards>.card>.image {
+  height: 20vh;
+}
+
+.ui.card>.content>.header.block-with-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+.grid-items {
+  display: flex;
+  width: 1200px;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}

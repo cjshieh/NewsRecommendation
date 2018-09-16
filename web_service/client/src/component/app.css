@@ -1,0 +1,19 @@
+.pushable > .pusher {
+  background: hsl(0, 0%, 98%);
+}
+
+.ui.segment.yn-sidebar {
+  margin: 0;
+  border: none;
+}
+
+.pushable:not(body) {
+  transform: none;
+}
+
+.pushable:not(body) > .ui.sidebar,
+.pushable:not(body) > .fixed,
+.pushable:not(body) > .pusher:after {
+  position: fixed;
+  top: 56px;
+}

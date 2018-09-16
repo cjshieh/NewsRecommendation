@@ -1,0 +1,9 @@
+.ui .cards {
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  box-shadow: none;
+  margin-top: 1em;
+}
