@@ -1,4 +1,4 @@
-import "./login_form.css";
+import "./signup_form.css";
 import {
   Button,
   Form,
@@ -23,7 +23,7 @@ const LoginForm = ({
     <Grid textAlign="center" style={{ height: "100%" }} verticalAlign="middle">
       <Grid.Column style={{ maxWidth: 450 }}>
         <Header as="h2" color="grey" textAlign="center">
-          <Image src={Logo} /> Log-in to your account
+          <Image src={Logo} /> Sign Up for YouNews
         </Header>
         <Form size="large" onSubmit={onSubmit}>
           <Segment stacked>
@@ -44,6 +44,15 @@ const LoginForm = ({
               type="password"
               onChange={onChange}
             />
+            <Form.Input
+              fluid
+              icon="lock"
+              iconPosition="left"
+              name="confirm_password"
+              placeholder="Confirm Password"
+              type="password"
+              onChange={onChange}
+            />
             <Message
               className="errorMsg"
               // style={{display: "block"}}
@@ -52,12 +61,12 @@ const LoginForm = ({
               content="You can only sign up for an account once with a given e-mail address."
             />
             <Button color="grey" fluid size="large">
-              Login
+              Signup
             </Button>
           </Segment>
         </Form>
         <Message>
-          New to us? <a href="#">Sign Up</a>
+          Already sign up? <a href="#">Login</a>
         </Message>
       </Grid.Column>
     </Grid>
