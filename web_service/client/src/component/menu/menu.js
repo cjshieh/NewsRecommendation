@@ -5,6 +5,7 @@ import { Button, Form, Icon, Image, Input } from "semantic-ui-react";
 import Logo from "../../assets/Logo.png";
 import "./menu.css";
 import { bindActionCreators } from "redux";
+import { Link } from "react-router-dom";
 
 class Menu extends React.Component {
   constructor() {
@@ -55,8 +56,8 @@ class Menu extends React.Component {
           <Button className="yn-search-end" onClick={this.toggleHidden}>
             <Icon name="search" />
           </Button>
-          <Button className="end-login">Login</Button>
-          <Button className="end-signup">Sign Up</Button>
+          <Button className="end-login" as={Link} to="/login">Login</Button>
+          <Button className="end-signup" as={Link} to="/signup">Sign Up</Button>
           {/* login success */
           /*
           <Dropdown

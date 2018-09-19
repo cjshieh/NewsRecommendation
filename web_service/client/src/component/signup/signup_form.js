@@ -12,6 +12,7 @@ import {
 import Logo from "../../assets/logo_login.png";
 import PropTypes from 'prop-types';
 import React from "react";
+import { Link } from "react-router-dom";
 
 const LoginForm = ({
   onSubmit,
@@ -19,8 +20,8 @@ const LoginForm = ({
   errors,
   user
 }) => (
-  <div className="login-form">
-    <Grid textAlign="center" style={{ height: "100%" }} verticalAlign="middle">
+  <div className="yn-signup-form">
+    <Grid textAlign="center" className="yn-signup-elements" verticalAlign="middle">
       <Grid.Column style={{ maxWidth: 450 }}>
         <Header as="h2" color="grey" textAlign="center">
           <Image src={Logo} /> Sign Up for YouNews
@@ -66,7 +67,7 @@ const LoginForm = ({
           </Segment>
         </Form>
         <Message>
-          Already sign up? <a href="#">Login</a>
+          Already sign up? <Link to="/login">Login</Link>
         </Message>
       </Grid.Column>
     </Grid>
