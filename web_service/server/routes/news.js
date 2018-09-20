@@ -20,6 +20,15 @@ router.get('/', function(req, res, next) {
            'digest':"3RjuEomJo26O1syZbUdOHA==\n",
            'time':"Today",
            'reason':"Hot"
+          },
+          {
+            "description" : "The president, in a pair of tweets, said the Justice Department was putting the re-election chances of two “popular” Republican lawmakers at risk.",
+            "title" : "Trump Blasts Sessions for Charging G.O.P. Members Before Midterms",
+            "url" : "https://www.nytimes.com/2018/09/03/us/politics/trump-sessions-midterms.html",
+            "source" : "The New York Times",
+            "urlToImage" : "https://static01.nyt.com/images/2018/09/04/us/04dc-TRUMP/04dc-TRUMP-facebookJumbo.jpg",
+            "digest" : "TdiBpJoh7vuKj1VbEvBk+Q==\n",
+            'reason':"Recommend"
           }
         ];
     res.json(news);
