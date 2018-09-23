@@ -6,13 +6,18 @@
     "start": "nodemon ./bin/www"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.3",
     "cookie-parser": "~1.4.3",
+    "cors": "^2.8.4",
     "debug": "~2.6.9",
     "express": "~4.16.0",
     "express-jwt": "^5.3.1",
     "http-errors": "~1.6.2",
     "jayson": "^2.0.6",
+    "jsonwebtoken": "^8.3.0",
     "mongoose": "^5.2.16",
-    "morgan": "~1.9.0"
+    "morgan": "~1.9.0",
+    "pug": "^2.0.3"
   }
 }

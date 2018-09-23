@@ -1,7 +1,7 @@
-const config = require('config.json');
+const config = require('../config.json');
 const mongoose = require('mongoose');
 
-mongoose.connect(config.connectionString);
+mongoose.connect(config.connectionString, { useNewUrlParser: true, autoIndex: false });
 mongoose.Promise = global.Promise;
 
 module.exports = {
