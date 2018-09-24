@@ -1,11 +1,2 @@
-export function toggleDrawer() {
-    return {
-        type: 'toggle_drawer'
-    }
-}
-
-export function hideDrawer() {
-    return {
-        type: 'hide_drawer'
-    }
-}
+export * from './user_actions';
+export * from './iteraction_actions';
