@@ -22,6 +22,7 @@ class NewsPanel extends Component {
   }
 
   handleScroll() {
+    // TODO: prevent background scrolling
     if(this.props.toggle.visible) {
       return;
     }
@@ -156,19 +157,13 @@ class NewsPanel extends Component {
         </Container>
       );
     } else {
-      console.log("nothing...");
       return <Spiner />;
     }
   }
 }
 
-function mapStateToProps(state) {
-  const obj = { toggle: state.toggle };
-  console.group();
-  console.log("Get from component mapStateToProps");
-  console.log(obj.toggle);
-  console.groupEnd();
-  return obj;
+function mapStateToProps({toggle}) {
+  return {toggle};
 }
 
 export default connect(mapStateToProps)(NewsPanel);
