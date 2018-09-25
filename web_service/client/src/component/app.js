@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { interActions } from "../actions/index";
 import YuMenu from "./menu/menu";
 import NewsPanel from "./news_panel/news_panel";
-import NewsFeed from "../news_feed";
+import NewsFeed from "./news_feed/news_feed";
 import { Icon, Menu, Sidebar, Segment, Sticky } from "semantic-ui-react";
 import { bindActionCreators } from "redux";
 import { Link ,Route, Switch } from "react-router-dom";
