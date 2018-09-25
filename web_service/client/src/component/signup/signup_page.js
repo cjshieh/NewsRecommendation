@@ -1,6 +1,8 @@
-import React from 'react';
-
-import SignUpForm from './signup_form';
+import React from "react";
+import { connect } from "react-redux";
+import { alertActions, userActions } from "../../actions";
+import SignUpForm from "./signup_form";
+import { createBrowserHistory } from 'history';
 
 class SignUpPage extends React.Component {
   constructor(props) {
@@ -10,12 +12,15 @@ class SignUpPage extends React.Component {
     this.state = {
       errors: {},
       user: {
-        email: '',
-        password: '',
-        confirm_password: ''
+        email: "",
+        password: "",
+        confirm_password: ""
       }
     };
-
+    const history = createBrowserHistory();
+    history.listen(() => {
+      this.props.dispatch(alertActions.clear());
+    });
     this.processForm = this.processForm.bind(this);
     this.changeUser = this.changeUser.bind(this);
   }
@@ -31,6 +36,14 @@ class SignUpPage extends React.Component {
     if (password !== confirm_password) {
       return;
     }
+
+    const user = { username: email, password };
+    const { dispatch } = this.props;
+    dispatch(
+      userActions.register(user, () => {
+        this.props.history.push("/");
+      })
+    );
 
     // TODO; post signup data.
   }
@@ -48,11 +61,11 @@ class SignUpPage extends React.Component {
     if (this.state.user.password !== this.state.user.confirm_password) {
       const errors = this.state.errors;
       errors.password = "Password and Confirm Password don't match.";
-      this.setState({errors});
+      this.setState({ errors });
     } else {
       const errors = this.state.errors;
-      errors.password = '';
-      this.setState({errors});
+      errors.password = "";
+      this.setState({ errors });
     }
   }
 
@@ -61,11 +74,18 @@ class SignUpPage extends React.Component {
       <SignUpForm
         onSubmit={this.processForm}
         onChange={this.changeUser}
-        errors={this.state.errors}
-        user={this.state.user}
+        validation={this.state.errors}
+        alert={this.props.alert}
       />
     );
   }
 }
 
-export default SignUpPage;
+function mapStateToProps(state) {
+  const {alert} = state;
+  return {
+    alert
+  };
+}
+
+export default connect(mapStateToProps)(SignUpPage);

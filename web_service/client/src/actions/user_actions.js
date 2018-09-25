@@ -18,7 +18,6 @@ function login(username, password, callback) {
                 user => { 
                     dispatch(success(user));
                     callback();
-                    // history.push('/');
                 },
                 error => {
                     dispatch(failure(error.toString()));
@@ -37,16 +36,15 @@ function logout() {
     return { type: userConstants.LOGOUT };
 }
 
-function register(user) {
+function register(user, callback) {
     return dispatch => {
         dispatch(request(user));
 
         userService.register(user)
             .then(
                 user => { 
-                    dispatch(success());
-                    // history.push('/login');
-                    dispatch(alertActions.success('Registration successful'));
+                    dispatch(success(user));
+                    callback();
                 },
                 error => {
                     dispatch(failure(error.toString()));
@@ -56,6 +54,6 @@ function register(user) {
     };
 
     function request(user) { return { type: userConstants.REGISTER_REQUEST, user } }
-    function success(user) { return { type: userConstants.REGISTER_SUCCESS, user } }
-    function failure(error) { return { type: userConstants.REGISTER_FAILURE, error } }
+    function success(user) { return { type: userConstants.LOGIN_SUCCESS, user } }
+    function failure(error) { return { type: userConstants.LOGIN_FAILURE, error } }
 }

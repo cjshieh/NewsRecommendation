@@ -7,8 +7,6 @@ import "./menu.css";
 import { bindActionCreators } from "redux";
 import { Link } from "react-router-dom";
 
-const languageOptions = [{ key: "logout", text: "logout", value: "logout" }];
-
 class Menu extends React.Component {
   constructor() {
     super();
