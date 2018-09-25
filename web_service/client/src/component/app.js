@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { hideDrawer } from "../actions/index";
+import { interActions } from "../actions/index";
 import YuMenu from "./menu/menu";
 import NewsPanel from "./news_panel/news_panel";
 import NewsFeed from "../news_feed";
@@ -23,11 +23,6 @@ class App extends Component {
   render() {
     const { visible } = this.props.toggle;
     const { contextRef } = this.state;
-    console.group();
-    console.log("Inside from component");
-    console.log(this.props.toggle);
-    console.groupEnd();
-    // console.log("watch at component: " + visible);
     return (
       <React.Fragment>
         <Sticky context={contextRef}>
@@ -101,15 +96,15 @@ class App extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ hideDrawer: hideDrawer }, dispatch);
+  return bindActionCreators({ hideDrawer: interActions.hideDrawer }, dispatch);
 }
 
 function mapStateToProps(state) {
   const obj = { toggle: state.toggle };
-  console.group();
-  console.log("Get from component mapStateToProps");
-  console.log(obj.toggle);
-  console.groupEnd();
+  // console.group();
+  // console.log("Get from component mapStateToProps");
+  // console.log(obj.toggle);
+  // console.groupEnd();
   return obj;
 }
 
