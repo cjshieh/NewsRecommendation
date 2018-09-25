@@ -6,11 +6,12 @@ import LoginPage from "./component/login/login_page";
 import SignupPage from "./component/signup/signup_page";
 
 import { Provider } from "react-redux";
-import { createStore } from "redux";
+import { createStore, applyMiddleware } from "redux";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import rootReducer from "./reducers";
+import thunkMiddleware from 'redux-thunk';
 
-const store = createStore(rootReducer);
+const store = createStore(rootReducer,applyMiddleware(thunkMiddleware));
 
 ReactDOM.render(
   <Provider store={store}>
