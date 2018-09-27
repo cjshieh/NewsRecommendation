@@ -3,9 +3,13 @@ import { Card, Label, Icon, Image } from "semantic-ui-react";
 import "./news_card.css";
 
 class NewsCard extends React.Component {
+  redirectToUrl(url) {
+    window.open(url, '_blank');
+  }
+
   render() {
     return (
-      <Card>
+      <Card as="a" onClick={() => this.redirectToUrl(this.props.report.url)}>
         <Image src={this.props.report.urlToImage} />
         <Card.Content>
           <Card.Header as="h3" className="fade">
@@ -25,13 +29,12 @@ class NewsCard extends React.Component {
         </Card.Content>
         <Card.Content extra>
           <Label.Group>
-            <Label as="a">
-              {this.props.report.category}
-              <Icon name="close" />
-            </Label>
-            <Label as="a" color="red">
-              {this.props.report.reason}
-            </Label>
+            <Label as="div">{this.props.report.category}</Label>
+            {this.props.report.reason !== undefined && (
+              <Label as="div" color="red">
+                {this.props.report.reason}
+              </Label>
+            )}
           </Label.Group>
         </Card.Content>
       </Card>
