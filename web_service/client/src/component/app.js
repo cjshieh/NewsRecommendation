@@ -13,12 +13,10 @@ import "./app.css";
 class App extends Component {
   state = {};
 
-  handleContextRef = contextRef => this.setState({ contextRef });
-  // state = { visible: false };
-
-  // handleButtonClick = () => this.setState({ visible: !this.state.visible });
-
-  // handleSidebarHide = () => this.setState({ visible: false });
+  handleContextRef = contextRef => {
+    this.setState({ contextRef });
+  }
+  
 
   render() {
     const { visible } = this.props.toggle;

@@ -1,3 +1,7 @@
+body {
+  height: auto;
+}
+
 .pushable > .pusher {
   background: hsl(0, 0%, 98%);
 }
