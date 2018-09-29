@@ -6,27 +6,26 @@ import redis
 import os
 import sys
 
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-sys.path.append(os.path.join(parentdir, "common"))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
 
 import news_api_client
+import config_reader as reader
 from cloudAMQP_client import CloudAMQPClient
 
-SLEEP_TIME_IN_SECONDS = 10
+config = reader.read_config()
+SCRAPE_NEWS_TASK_QUEUE_URL = config['PIPELINE']['SCRAPE_QUEUE_URL']
+SCRAPE_NEWS_TASK_QUEUE_NAME = config['PIPELINE']['SCRAPE_QUEUE_NAME']
+
+SLEEP_TIME_IN_SECONDS = config.getint('PIPELINE', 'MONITOR_SLEEP_TIME') 
+
+REDIS_HOST = config['REDIS']['REDIS_HOST']
+REDIS_PORT = config.getint('REDIS', 'REDIS_PORT')
 # it will expires in 3 days
 NEWS_TIME_OUT_IN_SECONDS = 3600 * 24 * 3
-
-REDIS_HOST = 'localhost'
-REDIS_PORT = 6379
-
-SCRAPE_NEWS_TASK_QUEUE_URL = "amqp://rurhenzz:d-baqsTGTIHBRBcJONCV31w5Lu_Byl7N@dinosaur.rmq.cloudamqp.com/rurhenzz"
-SCRAPE_NEWS_TASK_QUEUE_NAME = "scrape_news_task"
 
 NEWS_SOURCES = [
     'bbc-news',
     'bbc-sport',
-    'bloomberg',
     'business-insider',
     'cnn',
     'entertainment-weekly',

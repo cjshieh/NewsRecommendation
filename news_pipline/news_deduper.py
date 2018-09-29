@@ -12,14 +12,16 @@ parentdir = os.path.dirname(currentdir)
 sys.path.append(os.path.join(parentdir, "common"))
 
 from cloudAMQP_client import CloudAMQPClient
+import config_reader as reader
 import mongodb_client
 
-DEDUPE_NEWS_TASK_QUEUE_URL = "amqp://cmqvlnlz:ssjlNafwRdnv-jw4s7l8JGviXstC3g1u@dinosaur.rmq.cloudamqp.com/cmqvlnlz"
-DEDUPE_NEWS_TASK_QUEUE_NAME = "dedup_news_task"
+config = reader.read_config()
+DEDUPE_NEWS_TASK_QUEUE_URL = config['PIPELINE']['DEDUPE_QUEUE_URL']
+DEDUPE_NEWS_TASK_QUEUE_NAME = config['PIPELINE']['DEDUPE_QUEUE_NAME']
+SAME_NEWS_SIMILARITY_THRESHOLD = config.getfloat('PIPELINE', 'NEWS_SIMILARITY_THRESHOLD')
+SLEEP_TIME_IN_SECONDS = config.getint('PIPELINE', 'DEDUPER_SLEEP_TIME')
 NEWS_TABLE_NAME = "news-category"
 # NEWS_TABLE_NAME = "news"
-SAME_NEWS_SIMILARITY_THRESHOLD = 0.9
-SLEEP_TIME_IN_SECONDS = 1
 
 cloudAMQP_client = CloudAMQPClient(
     DEDUPE_NEWS_TASK_QUEUE_URL, DEDUPE_NEWS_TASK_QUEUE_NAME)

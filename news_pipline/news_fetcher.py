@@ -11,13 +11,15 @@ parentdir = os.path.dirname(currentdir)
 sys.path.append(os.path.join(parentdir, "common"))
 
 from cloudAMQP_client import CloudAMQPClient
+import config_reader as reader
 
-DEDUPE_NEWS_TASK_QUEUE_URL = "amqp://cmqvlnlz:ssjlNafwRdnv-jw4s7l8JGviXstC3g1u@dinosaur.rmq.cloudamqp.com/cmqvlnlz"
-DEDUPE_NEWS_TASK_QUEUE_NAME = "dedup_news_task"
-SCRAPE_NEWS_TASK_QUEUE_URL = "amqp://rurhenzz:d-baqsTGTIHBRBcJONCV31w5Lu_Byl7N@dinosaur.rmq.cloudamqp.com/rurhenzz"
-SCRAPE_NEWS_TASK_QUEUE_NAME = "scrape_news_task"
+config = reader.read_config()
+DEDUPE_NEWS_TASK_QUEUE_URL = config['PIPELINE']['DEDUPE_QUEUE_URL']
+DEDUPE_NEWS_TASK_QUEUE_NAME = config['PIPELINE']['DEDUPE_QUEUE_NAME']
+SCRAPE_NEWS_TASK_QUEUE_URL = config['PIPELINE']['SCRAPE_QUEUE_URL']
+SCRAPE_NEWS_TASK_QUEUE_NAME = config['PIPELINE']['SCRAPE_QUEUE_NAME']
 
-SLEEP_TIME_IN_SECONDS = 5
+SLEEP_TIME_IN_SECONDS = config.getint('PIPELINE', 'FETCHER_SLEEP_TIME')
 
 dedupe_news_queue_client = CloudAMQPClient(DEDUPE_NEWS_TASK_QUEUE_URL, DEDUPE_NEWS_TASK_QUEUE_NAME)
 scrape_news_queue_client = CloudAMQPClient(SCRAPE_NEWS_TASK_QUEUE_URL, SCRAPE_NEWS_TASK_QUEUE_NAME)

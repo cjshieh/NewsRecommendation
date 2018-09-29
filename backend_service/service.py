@@ -1,7 +1,13 @@
+import os
+import sys
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
+import config_reader as reader
 import pyjsonrpc
 
-SERVER_HOST = 'localhost'
-SERVER_PORT = 8080 
+config = reader.read_config()
+SERVER_HOST = config.get('SERVER', 'SERVER_HOST')
+SERVER_PORT = config.getint('SERVER', 'SERVER_PORT')
 
 class RequestHandler(pyjsonrpc.HttpRequestHandler):
     # Test method
@@ -11,7 +17,7 @@ class RequestHandler(pyjsonrpc.HttpRequestHandler):
         return a + b
 
 http_server = pyjsonrpc.ThreadingHttpServer(
-    server_address = ('localhost', 8080),
+    server_address = (SERVER_HOST, SERVER_PORT),
     RequestHandlerClass = RequestHandler
 )
 

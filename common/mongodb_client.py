@@ -1,8 +1,10 @@
 from pymongo import MongoClient
+import config_reader as reader
 
-MONGO_DB_HOST = 'localhost'
-MONGO_DB_PORT = '27017'
-DB_NAME = 'tap-news'
+config = reader.read_config()
+MONGO_DB_HOST = config['DB']['MONGO_DB_HOST']
+MONGO_DB_PORT = config['DB']['MONGO_DB_PORT']
+DB_NAME = config['DB']['DB_NAME']
 
 client = MongoClient("%s:%s" % (MONGO_DB_HOST, MONGO_DB_PORT))
 

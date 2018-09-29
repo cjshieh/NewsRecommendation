@@ -5,13 +5,15 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
 
 import news_api_client
-from cloudAMQP_client import CloudAMQPClient
 
-# TODO: use your own queue.
-DEDUPE_NEWS_TASK_QUEUE_URL = "amqp://cmqvlnlz:ssjlNafwRdnv-jw4s7l8JGviXstC3g1u@dinosaur.rmq.cloudamqp.com/cmqvlnlz"
-DEDUPE_NEWS_TASK_QUEUE_NAME = "dedup_news_task"
-SCRAPE_NEWS_TASK_QUEUE_URL = "amqp://rurhenzz:d-baqsTGTIHBRBcJONCV31w5Lu_Byl7N@dinosaur.rmq.cloudamqp.com/rurhenzz"
-SCRAPE_NEWS_TASK_QUEUE_NAME = "scrape_news_task"
+from cloudAMQP_client import CloudAMQPClient
+import config_reader as reader
+
+config = reader.read_config()
+DEDUPE_NEWS_TASK_QUEUE_URL = config['PIPELINE']['DEDUPE_QUEUE_URL']
+DEDUPE_NEWS_TASK_QUEUE_NAME = config['PIPELINE']['DEDUPE_QUEUE_NAME']
+SCRAPE_NEWS_TASK_QUEUE_URL = config['PIPELINE']['SCRAPE_QUEUE_URL']
+SCRAPE_NEWS_TASK_QUEUE_NAME = config['PIPELINE']['SCRAPE_QUEUE_NAME']
 
 def clearQueue(queue_url, queue_name):
     scrape_news_queue_client = CloudAMQPClient(queue_url, queue_name)
