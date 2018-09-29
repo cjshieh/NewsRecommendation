@@ -1,4 +1,3 @@
-const baseUrl = "http://localhost:3000";
 export const userService = {
   login,
   logout,
@@ -7,6 +6,7 @@ export const userService = {
   //   update
 };
 
+const baseUrl = "http://localhost:3000";
 function login(username, password) {
   const requestOptions = {
     method: "POST",
