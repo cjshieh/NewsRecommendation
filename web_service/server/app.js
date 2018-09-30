@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const index = require('./routes/index');
-const news = require('./routes/news');
+const news = require('./routes/news_controller');
 const users = require('./routes/user_controller');
 const errorHandler = require('./helpers/error_handler');
 const jwt = require('./helpers/jwt');

@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Label, Icon, Image } from "semantic-ui-react";
+import { Card, Label, Image } from "semantic-ui-react";
 import "./news_card.css";
 
 class NewsCard extends React.Component {
@@ -16,11 +16,13 @@ class NewsCard extends React.Component {
             {this.props.report.title}
           </Card.Header>
           <Card.Meta>
-            <span className="text">{this.props.report.source}</span>
+            <span className="text">{this.props.report.source.name}</span>
           </Card.Meta>
+          
           <Card.Meta>
             <span className="date">{this.props.report.publishedAt}</span>
           </Card.Meta>
+          
           {/*
       <Card.Description>
         In the end, Andrew Puzder had too much baggage -- both personal and professional -- to be confirmed as President Donald Trump's Cabinet.

@@ -11,13 +11,13 @@ class NewsPanel extends Component {
   constructor() {
     // super(props);
     super();
-    this.state = { news: null };
+    this.state = { pageNum:1 };
     this.handleScroll = this.handleScroll.bind(this);
     this.disableScroll = this.disableScroll.bind(this);
     this.enableScroll = this.enableScroll.bind(this);
     this.preventDefault = this.preventDefault.bind(this);
     this.preventDefaultForScrollKeys = 
-      this.preventDefaultForScrollKeys.bind(this);
+    this.preventDefaultForScrollKeys.bind(this);
   }
 
   componentDidMount() {
@@ -45,11 +45,17 @@ class NewsPanel extends Component {
   }
 
   loadMoreNews() {
-    this.props.dispatch(loadActions.loadAll());
+    if(this.props.allLoaded) {
+      return;
+    }
+
+    this.props.dispatch(loadActions.loadByPage(this.state.pageNum));
+    this.setState({pageNum: this.state.pageNum+1});
   }
 
   renderNews() {
     return this.props.loader.map((report, index) => {
+      console.log(report);
       return <NewsCard report={report} key={index} />;
     });
   }
@@ -62,9 +68,7 @@ class NewsPanel extends Component {
         </Container>
       );
     } else {
-      {
-        this.disableScroll();
-      }
+      this.disableScroll();
       return <Spiner />;
     }
   }
@@ -99,6 +103,7 @@ class NewsPanel extends Component {
 }
 
 function mapStateToProps({ toggle, loader }) {
+  console.log(loader);
   return { toggle, loader };
 }
 

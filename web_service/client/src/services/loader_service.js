@@ -2,6 +2,7 @@ import { authHeader } from "./helper/auth_header";
 export const loadService = {
   loadAll,
   loadByCategory,
+  loadByPage,
   loadByQuery
 };
 
@@ -13,6 +14,36 @@ function loadAll() {
   };
 
   return fetch(`${baseUrl}/news`, requestOptions).then(handleResponse);
+}
+
+function loadByPage(pageNum) {
+  const user = JSON.parse(localStorage.getItem("user"));
+  // console.log(user);
+  const username = user ? user.username : "";
+  const uri = `${baseUrl}/news/userId/${username}/pageNum/${pageNum}`;
+  const requestOptions = {
+    method: "GET",
+    headers: authHeader()
+  };
+  console.log(encodeURI(uri));
+  return fetch(encodeURI(uri), requestOptions)
+    .then(handleResponse);
+    // .then(news => {
+    //   if(!news || news.length === 0) {
+    //     return {
+    //       allLoaded: true,
+    //       news: []
+    //     }
+    //   }
+    //   console.group();
+    //   console.log('service response:');
+    //   console.log(news);
+    //   console.groupCollapsed();
+    //   return {
+    //     allLoaded: false,
+    //     news
+    //   }
+    // });
 }
 
 function loadByCategory(category) {
@@ -32,7 +63,7 @@ function handleResponse(response) {
       const error = (data && data.message) || response.statusText;
       return Promise.reject(error);
     }
-
+    // console.log(data);
     return data;
   });
 }

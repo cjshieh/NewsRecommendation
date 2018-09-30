@@ -74,5 +74,6 @@ def getNewsSummariesForUser(user_id, page_num):
         del news['text']
         if news['publishedAt'].date() == datetime.today().date():
             news['time'] = 'today'
+        news['publishedAt'] = news['publishedAt'].strftime("%Y-%m-%d") 
     # Data formats for frontend usage
     return json.loads(dumps(sliced_news))
