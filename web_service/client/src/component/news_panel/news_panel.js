@@ -54,14 +54,14 @@ class NewsPanel extends Component {
   }
 
   renderNews() {
-    return this.props.loader.map((report, index) => {
-      console.log(report);
+    return this.props.news.map((report, index) => {
+      // console.log(report);
       return <NewsCard report={report} key={index} />;
     });
   }
 
   render() {
-    if (this.props.loader) {
+    if (this.props.news) {
       return (
         <Container>
           <Card.Group>{this.renderNews()}</Card.Group>
@@ -104,7 +104,7 @@ class NewsPanel extends Component {
 
 function mapStateToProps({ toggle, loader }) {
   console.log(loader);
-  return { toggle, loader };
+  return { toggle, news: loader.news, allLoaded: loader.allLoaded };
 }
 
 export default connect(mapStateToProps)(NewsPanel);

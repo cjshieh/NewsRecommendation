@@ -27,23 +27,19 @@ function loadByPage(pageNum) {
   };
   console.log(encodeURI(uri));
   return fetch(encodeURI(uri), requestOptions)
-    .then(handleResponse);
-    // .then(news => {
-    //   if(!news || news.length === 0) {
-    //     return {
-    //       allLoaded: true,
-    //       news: []
-    //     }
-    //   }
-    //   console.group();
-    //   console.log('service response:');
-    //   console.log(news);
-    //   console.groupCollapsed();
-    //   return {
-    //     allLoaded: false,
-    //     news
-    //   }
-    // });
+    .then(handleResponse)
+    .then(news => {
+      if(!news || news.length === 0) {
+        return {
+          allLoaded: true,
+          news: []
+        }
+      }
+      return {
+        allLoaded: false,
+        news
+      }
+    });
 }
 
 function loadByCategory(category) {

@@ -16,7 +16,6 @@ function loadAll() {
         loadService.loadAll()
             .then(
                 news => {
-                    console.log(news);
                     dispatch(success(news));
                 },
                 error => {
@@ -35,7 +34,7 @@ function loadByPage(pageNum) {
         loadService.loadByPage(pageNum)
             .then(
                 data => {
-                    dispatch(success(data))
+                    data.allLoaded ? dispatch(done()) : dispatch(success(data))
                 },
                 error => {
                     dispatch(failure(error.toString()));
@@ -44,6 +43,7 @@ function loadByPage(pageNum) {
             );
     };
 
+    function done() {return {type: loadConstants.LOAD_ALL_SUCCESS }}
     function success(data) { return { type: loadConstants.LOAD_SUCCESS, data } }
     function failure(error) { return { type: loadConstants.LOAD_FAILURE, error } }
 }
