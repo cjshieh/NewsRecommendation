@@ -39,7 +39,7 @@ LOG_CLICKS_TASK_QUEUE_NAME = config.get('CLICKLOGS', 'LOG_CLICKS_QUEUE_NAME')
 SLEEP_TIME_IN_SECONDS = config.getint('CLICKLOGS', 'LOG_QUEUE_SLEEP_TIME')
 
 PREFERENCE_MODEL_TABLE_NAME = config.get('CLICKLOGS', 'CLICK_LOG_TABLE_NAME')
-NEWS_TABLE_NAME = config.get('CLICKLOGS', 'NEWS_TABLE_NAME')
+NEWS_TABLE_NAME = config.get('NEWS', 'NEWS_TABLE_NAME')
 
 cloudAMQP_client = CloudAMQPClient(LOG_CLICKS_TASK_QUEUE_URL, LOG_CLICKS_TASK_QUEUE_NAME)
 
@@ -73,13 +73,15 @@ def handle_message(msg):
 
     # Update model using time decaying method
     news = db[NEWS_TABLE_NAME].find_one({'digest': newsId})
-    if (news is None
-        or 'class' not in news
+    if news is None:
+        print 'Retrieved news is none'
+        print 'Skipping processing....'
+        return
+    
+    if ( 'class' not in news
         or news['class'] not in news_classes.classes):
-        print news is None
-        print 'class' not in news
-        print news['class'] not in news_classes.classes
-        print 'Skipping processing...'
+        print 'There is no "class" in news or this "class" is not in the category'
+        print 'Skipping processing....'
         return
 
     click_class = news['class']
