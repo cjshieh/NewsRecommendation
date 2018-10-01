@@ -20,8 +20,13 @@ class RequestHandler(pyjsonrpc.HttpRequestHandler):
     """ Get news summaries for a user """
     @pyjsonrpc.rpcmethod
     def getNewsSummariesForUser(self, user_id, page_num):
-        print "load news is called %s and %s" % (user_id, page_num)
         return operations.getNewsSummariesForUser(user_id, page_num)
+    
+    """ Store user behavior """
+    @pyjsonrpc.rpcmethod
+    def logNewsClickForUser(self, user_id, news_id):
+        print "Store behavior is called %s and %s" % (user_id, news_id)
+        return operations.logNewsClickForUser(user_id, news_id)
 
 http_server = pyjsonrpc.ThreadingHttpServer(
     server_address = (SERVER_HOST, SERVER_PORT),

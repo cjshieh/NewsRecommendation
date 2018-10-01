@@ -11,15 +11,16 @@ from datetime import datetime
 # import common package in parent directory
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
 
-import mongodb_client
 import config_reader as reader
 from cloudAMQP_client import CloudAMQPClient
+import mongodb_client
+import recommendation_service_client
 
 config = reader.read_config()
 REDIS_HOST = config.get('REDIS', 'REDIS_HOST')
 REDIS_PORT = config.getint('REDIS', 'REDIS_PORT')
 
-NEWS_TABLE_NAME = "news"
+NEWS_TABLE_NAME = config.get('NEWS', 'NEWS_TABLE_NAME')
 
 NEWS_LIMIT = config.getint('NEWS', 'NEWS_LIMIT')
 # 9 news per page
@@ -27,8 +28,30 @@ NEWS_LIST_BATCH_SIZE = config.getint('NEWS', 'NEWS_LIST_BATCH_SIZE')
 # Much prefer 3600 but for testing functionality we set 60
 USER_NEWS_TIME_OUT_IN_SECONDS = config.getint('NEWS', 'USER_NEWS_TIME_OUT')
 
+# Click log settings
+CLICK_LOG_TABLE_NAME = config.get('NEWS', 'CLICK_LOG_TABLE_NAME')
+LOG_CLICKS_TASK_QUEUE_URL = config.get('PIPELINE', 'LOG_CLICKS_QUEUE_URL')
+LOG_CLICKS_TASK_QUEUE_NAME = config.get('PIPELINE', 'LOG_CLICKS_QUEUE_NAME')
 
+cloudAMQP_client = CloudAMQPClient(LOG_CLICKS_TASK_QUEUE_URL, LOG_CLICKS_TASK_QUEUE_NAME)
 redis_client = redis.StrictRedis(REDIS_HOST, REDIS_PORT, db=0)
+
+def _formatNews(news, preference):
+    topPreference = None
+    if preference is not None and len(preference) > 0:
+        topPreference = preference[0]
+
+    for report in news:
+        # Remove text field to save bandwidth.
+        del report['text']
+        if report['class'] is not None and report['class'] in topPreference:
+            report['reason'] = 'Recommend'
+        
+        if report['publishedAt'].date() == datetime.today().date():
+            report['time'] = 'today'
+        report['publishedAt'] = report['publishedAt'].strftime("%Y-%m-%d") 
+    # Data formats for frontend usage
+    return json.loads(dumps(news))
 
 def getNewsSummariesForUser(user_id, page_num):
     ''' Form a news lists based on page_number and user_id.
@@ -68,12 +91,15 @@ def getNewsSummariesForUser(user_id, page_num):
         redis_client.expire(user_id, USER_NEWS_TIME_OUT_IN_SECONDS)
 
         sliced_news = total_news[begin_index:end_index]
+    preference = recommendation_service_client.getPreferenceForUser(user_id)
+    return _formatNews(sliced_news, preference)
 
-    for news in sliced_news:
-        # Remove text field to save bandwidth.
-        del news['text']
-        if news['publishedAt'].date() == datetime.today().date():
-            news['time'] = 'today'
-        news['publishedAt'] = news['publishedAt'].strftime("%Y-%m-%d") 
-    # Data formats for frontend usage
-    return json.loads(dumps(sliced_news))
+def logNewsClickForUser(user_id, news_id):
+    message = { 'userId': user_id, 'newsId': news_id, 'timestamp':datetime.utcnow() }
+    db = mongodb_client.get_db()
+    # For backup, we write into database
+    db[CLICK_LOG_TABLE_NAME] = message
+    
+    # send log task to process preference
+    message = { 'userId': user_id, 'newsId': news_id, 'timestamp':str(datetime.utcnow()) }
+    cloudAMQP_client.sendMessage(message)
