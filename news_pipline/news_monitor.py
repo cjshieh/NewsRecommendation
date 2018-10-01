@@ -31,7 +31,6 @@ NEWS_SOURCES = [
     'entertainment-weekly',
     'espn',
     'fox-news',
-    'fox-sports',
     'ign',
     'techcrunch',
     'the-new-york-times',
