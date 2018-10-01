@@ -1,5 +1,6 @@
 import React from "react";
 import { Card, Label, Image } from "semantic-ui-react";
+import { Markup } from 'interweave';
 import "./news_card.css";
 
 class NewsCard extends React.Component {
@@ -7,13 +8,21 @@ class NewsCard extends React.Component {
     window.open(url, '_blank');
   }
 
+  // handleTitle(title) {
+  //   const splits = title.splits(/(<em>.+<\/em>)/);
+  //   if(splits.length == 1)
+  //     return
+    
+  // }
+
   render() {
     return (
       <Card as="a" onClick={() => this.redirectToUrl(this.props.report.url)}>
         <Image src={this.props.report.urlToImage} />
         <Card.Content>
           <Card.Header as="h3" className="fade">
-            {this.props.report.title}
+            <Markup content={this.props.report.title} />
+            {/*["And the winner of " , <em>Big Brother</em>, " season 20 is…"]*/}
           </Card.Header>
           <Card.Meta>
             <span className="text">{this.props.report.source.name}</span>

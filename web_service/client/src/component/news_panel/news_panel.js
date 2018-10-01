@@ -55,8 +55,7 @@ class NewsPanel extends Component {
 
   renderNews() {
     return this.props.news.map((report, index) => {
-      // console.log(report);
-      return <NewsCard report={report} key={index} />;
+      return <NewsCard report={report} key={report.digest} />;
     });
   }
 
