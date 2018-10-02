@@ -1,10 +1,11 @@
-import { alertActions } from './';
-import { loadConstants } from '../constants/load_constants';
-import { loadService } from '../services/loader_service';
+import { alertActions } from '.';
+import { newsConstants } from '../constants';
+import { newsService } from '../services/news_service';
 
-export const loadActions = {
+export const newsActions = {
     loadAll,
-    loadByPage
+    loadByPage,
+    storeBehaviour
     // TODO: add these two actions
     //loadByCategory,
     //loadByQuery
@@ -13,7 +14,7 @@ export const loadActions = {
 function loadAll() {
     console.log("action get called");
     return dispatch => {
-        loadService.loadAll()
+        newsService.loadAll()
             .then(
                 news => {
                     dispatch(success(news));
@@ -25,13 +26,13 @@ function loadAll() {
             );
     };
 
-    function success(news) { return { type: loadConstants.LOAD_SUCCESS, news } }
-    function failure(error) { return { type: loadConstants.LOAD_FAILURE, error } }
+    function success(news) { return { type: newsConstants.LOAD_SUCCESS, news } }
+    function failure(error) { return { type: newsConstants.LOAD_FAILURE, error } }
 }
 
 function loadByPage(pageNum) {
     return dispatch => {
-        loadService.loadByPage(pageNum)
+        newsService.loadByPage(pageNum)
             .then(
                 data => {
                     data.allLoaded ? dispatch(done()) : dispatch(success(data))
@@ -43,7 +44,12 @@ function loadByPage(pageNum) {
             );
     };
 
-    function done() {return {type: loadConstants.LOAD_ALL_SUCCESS }}
-    function success(data) { return { type: loadConstants.LOAD_SUCCESS, data } }
-    function failure(error) { return { type: loadConstants.LOAD_FAILURE, error } }
+    function done() {return {type: newsConstants.LOAD_ALL_SUCCESS }}
+    function success(data) { return { type: newsConstants.LOAD_SUCCESS, data } }
+    function failure(error) { return { type: newsConstants.LOAD_FAILURE, error } }
+}
+
+function storeBehaviour(newsId) {
+    newsService.storeBehaviour(newsId);
+    return {type: newsConstants.STORE_SUCCESS }
 }

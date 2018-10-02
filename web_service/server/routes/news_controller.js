@@ -2,17 +2,27 @@ const express = require('express');
 const router = express.Router();
 
 const rpc_client = require('../rpc_client/rpc_client_service');
-router.get('/userId/:userId/pageNum/:pageNum', newsSummary);
+router.get('/userId/:userId/pageNum/:pageNum', getNewsSummary);
+router.post('/userId/:userId/newsId/:newsId', storeClicksLogs);
 
 module.exports = router;
 
-function newsSummary(req, res, next) {
+function getNewsSummary(req, res, next) {
   user_id = req.params['userId'];
   page_num = req.params['pageNum'];
 
   console.log(user_id, page_num);
 
   rpc_client.getNewsSummariesForUser(user_id, page_num, response => res.json(response));
+}
+
+function storeClicksLogs(req, res, next) {
+  user_id = req.params['userId'];
+  news_id = req.params['newsId'];
+
+  console.log(user_id, news_id); 
+  rpc_client.logNewsClickForUser(req.params);
+  res.status(200);
 }
 
 /* GET news summary list. */

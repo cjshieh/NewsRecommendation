@@ -21,12 +21,23 @@ function getNewsSummariesForUser(user_id, page_num, callback) {
             console.log(err);
             throw err;
         }
-        console.log(response);
+        // console.log(response);
         callback(response);
     });
 }
 
+function logNewsClickForUser({ userId, newsId }) {
+    console.log("store clicks behaviour");
+    client.request('logNewsClickForUser', [userId, newsId], (err, error, response) => {
+        if(err) {
+            throw err;
+        }
+        console.log(response);
+    })
+}
+
 module.exports = {
     add,
-    getNewsSummariesForUser
+    getNewsSummariesForUser,
+    logNewsClickForUser
 };

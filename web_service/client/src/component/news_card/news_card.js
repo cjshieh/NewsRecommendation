@@ -1,23 +1,28 @@
 import React from "react";
+import { connect } from "react-redux";
 import { Card, Label, Image } from "semantic-ui-react";
 import { Markup } from 'interweave';
+import { newsActions } from '../../actions';
 import "./news_card.css";
+
 
 class NewsCard extends React.Component {
   redirectToUrl(url) {
     window.open(url, '_blank');
   }
 
-  // handleTitle(title) {
-  //   const splits = title.splits(/(<em>.+<\/em>)/);
-  //   if(splits.length == 1)
-  //     return
-    
-  // }
+  storeBehaviour(newsId) {
+    this.props.dispatch(newsActions.storeBehaviour(newsId));
+  }
+
+  handleClick(url, newsId) {
+    this.redirectToUrl(url);
+    this.storeBehaviour(newsId);
+  } 
 
   render() {
     return (
-      <Card as="a" onClick={() => this.redirectToUrl(this.props.report.url)}>
+      <Card as="a" onClick={() => this.handleClick(this.props.report.url, this.props.report.digest)}>
         <Image src={this.props.report.urlToImage} />
         <Card.Content>
           <Card.Header as="h3" className="fade">
@@ -53,4 +58,7 @@ class NewsCard extends React.Component {
   }
 }
 
-export default NewsCard;
+function mapStateToProps({ preference }) {
+  return { preference }
+}
+export default connect(mapStateToProps)(NewsCard);

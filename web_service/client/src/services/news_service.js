@@ -1,9 +1,10 @@
 import { authHeader } from "./helper/auth_header";
-export const loadService = {
+export const newsService = {
   loadAll,
   loadByCategory,
   loadByPage,
-  loadByQuery
+  loadByQuery,
+  storeBehaviour
 };
 
 const baseUrl = "http://localhost:3000";
@@ -50,6 +51,18 @@ function loadByCategory(category) {
 function loadByQuery(queryKey) {
   // TODO: load from the search bar
   return;
+}
+
+function storeBehaviour(newsId) {
+  const user = JSON.parse(localStorage.getItem("user"));
+  // console.log(user);
+  const username = user ? user.username : "";
+  const uri = `${baseUrl}/news/userId/${username}/newsId/${newsId}`;
+  const requestOptions = {
+    method: "POST",
+    headers: authHeader()
+  };
+  return fetch(encodeURI(uri), requestOptions);
 }
 
 function handleResponse(response) {

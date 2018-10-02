@@ -5,7 +5,7 @@ import Spiner from "../util/spinner";
 import "./news_panel.css";
 import _ from "lodash";
 import { connect } from "react-redux";
-import { loadActions } from "../../actions";
+import { newsActions } from "../../actions";
 
 class NewsPanel extends Component {
   constructor() {
@@ -49,7 +49,7 @@ class NewsPanel extends Component {
       return;
     }
 
-    this.props.dispatch(loadActions.loadByPage(this.state.pageNum));
+    this.props.dispatch(newsActions.loadByPage(this.state.pageNum));
     this.setState({pageNum: this.state.pageNum+1});
   }
 
