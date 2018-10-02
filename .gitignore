@@ -29,3 +29,6 @@ coverage/
 
 # production
 build/
+
+# model-learning
+learn_jupyter/
