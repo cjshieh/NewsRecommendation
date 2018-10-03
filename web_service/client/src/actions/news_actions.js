@@ -50,6 +50,7 @@ function loadByPage(pageNum) {
 }
 
 function storeBehaviour(newsId) {
+    console.log("store behiour requests!");
     newsService.storeBehaviour(newsId);
     return {type: newsConstants.STORE_SUCCESS }
 }

@@ -4,7 +4,6 @@ import { alert } from './reducer_alert';
 import { authentication } from './reducer_authentication';
 import { loader } from './reducer_loader';
 import { registration} from './reducer_registration';
-import { preference } from './reducer_preference';
 // import { reducer as formReducer } from 'redux-form';
 
 const rootReducer = combineReducers({
@@ -12,8 +11,7 @@ const rootReducer = combineReducers({
     alert,
     authentication,
     loader,
-    registration,
-    preference
+    registration
 });
 
 export default rootReducer;

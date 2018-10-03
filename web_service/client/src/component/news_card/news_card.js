@@ -58,7 +58,4 @@ class NewsCard extends React.Component {
   }
 }
 
-function mapStateToProps({ preference }) {
-  return { preference }
-}
-export default connect(mapStateToProps)(NewsCard);
+export default connect(null)(NewsCard);

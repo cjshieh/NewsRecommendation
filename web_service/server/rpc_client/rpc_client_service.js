@@ -32,7 +32,10 @@ function logNewsClickForUser({ userId, newsId }) {
         if(err) {
             throw err;
         }
+        console.group();
+        console.log("deals from log service");
         console.log(response);
+        console.groupEnd();
     })
 }
 
