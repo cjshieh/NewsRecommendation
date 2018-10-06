@@ -15,11 +15,10 @@ The result of this is that the nth most recent selection will have a weight of
 selection would only have half the weight of the most recent. Increasing epsilon
 would bias towards more recent results more.
 '''
-
-import news_classes
 import os
 import sys
 
+import news_classes
 # import common package in parent directory
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
 

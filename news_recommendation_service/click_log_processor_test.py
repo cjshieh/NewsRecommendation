@@ -13,7 +13,7 @@ import mongodb_client
 PREFERENCE_MODEL_TABLE_NAME = "user_preference_model"
 NEWS_TABLE_NAME = "news"
 
-NUM_OF_CLASSES = 17
+NUM_OF_CLASSES = 7
 
 # Start MongoDB before running following tests.
 def test_basic():
