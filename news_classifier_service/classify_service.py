@@ -29,7 +29,11 @@ encoder = pickle.load( open( "news-encoder.model", "rb" ) )
 
 
 def normalize_text(title):
+    # encode unicode to string obj
+    title = title.encode('utf-8')
+    # remove punctuation
     new_title = title.translate(None, string.punctuation)
+    # remove multiple spaces between words
     new_title = re.sub(r'\s+',' ',new_title)
 
     return new_title

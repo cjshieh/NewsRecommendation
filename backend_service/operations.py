@@ -44,7 +44,8 @@ def _formatNews(news, preference):
     for report in news:
         # Remove text field to save bandwidth.
         del report['text']
-        if ( 'class' in report and
+        if (topPreference is not None and 
+            'class' in report and
             report['class'] is not None and
             report['class'] in topPreference ):
             report['reason'] = 'Recommend'
@@ -100,7 +101,7 @@ def logNewsClickForUser(user_id, news_id):
     message = { 'userId': user_id, 'newsId': news_id, 'timestamp':datetime.utcnow() }
     db = mongodb_client.get_db()
     # For backup, we write into database
-    db[CLICK_LOG_TABLE_NAME].save(message)
+    db[CLICK_LOG_TABLE_NAME].insert(message)
 
     # send log task to process preference
     message = { 'userId': user_id, 'newsId': news_id, 'timestamp':str(datetime.utcnow()) }
