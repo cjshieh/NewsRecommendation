@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import App from "./component/app";
-import LoginPage from "./component/login/login_page";
-import SignupPage from "./component/signup/signup_page";
+import App from "./components/app";
+import LoginPage from "./components/login/login_page";
+import SignupPage from "./components/signup/signup_page";
 
 import { Provider } from "react-redux";
 import { createStore, applyMiddleware } from "redux";

@@ -7,7 +7,7 @@ const items = {
   source: { id: null, name: "Marketwatch.com" },
   author: "Mike Murphy",
   title:
-    "Russian trolls stoked 'Star Wars: The Last Jedi' fan outrage, study finds",
+    "Hector \u0026 Lalo's A Backstory On 'Better Call Saul' Is Sure To Please 'Breaking Bad' Fans",
   description:
     "Much of the criticism of the movie was “deliberate, organized political influence measures disguised as fan arguments,” a researcher found.",
   url:

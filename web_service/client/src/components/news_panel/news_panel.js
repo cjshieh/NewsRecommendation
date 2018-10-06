@@ -54,9 +54,16 @@ class NewsPanel extends Component {
   }
 
   renderNews() {
-    return this.props.news.map((report, index) => {
-      return <NewsCard report={report} key={report.digest} />;
+    // return _.map(this.props.news, report => {
+    //   console.log(report);
+    //   return <NewsCard report={report} key={report.digest} />
+    // });
+    return Object.keys(this.props.news).map((digest) => {
+      return <NewsCard report={this.props.news[digest]} key={digest} />
     });
+    // return this.props.news.map((report, index) => {
+      // return <NewsCard report={report} key={report.digest} />;
+    // });
   }
 
   render() {

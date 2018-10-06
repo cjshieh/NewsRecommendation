@@ -1,12 +1,14 @@
 import { newsConstants } from "../constants";
+import _ from "lodash";
 
-const initialState = { allLoaded: false, news: [] };
+const initialState = { allLoaded: false, news: {} };
 export function loader(state = initialState, action) {
   switch (action.type) {
     case newsConstants.LOAD_SUCCESS:
+      console.log(_.mapKeys(action.data.news, 'digest'));
       return {
         allLoaded: state.allLoaded,
-        news: state.news.concat(action.data.news)
+        news: {...state.news, ..._.mapKeys(action.data.news, 'digest')}
       };
     case newsConstants.LOAD_ALL_SUCCESS:
       return {
