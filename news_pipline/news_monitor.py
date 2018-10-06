@@ -13,12 +13,12 @@ import config_reader as reader
 from cloudAMQP_client import CloudAMQPClient
 
 config = reader.read_config()
-SCRAPE_NEWS_TASK_QUEUE_URL = config['PIPELINE']['SCRAPE_QUEUE_URL']
-SCRAPE_NEWS_TASK_QUEUE_NAME = config['PIPELINE']['SCRAPE_QUEUE_NAME']
+SCRAPE_NEWS_TASK_QUEUE_URL = config.get('PIPELINE', 'SCRAPE_QUEUE_URL')
+SCRAPE_NEWS_TASK_QUEUE_NAME = config.get('PIPELINE', 'SCRAPE_QUEUE_NAME')
 
 SLEEP_TIME_IN_SECONDS = config.getint('PIPELINE', 'MONITOR_SLEEP_TIME') 
 
-REDIS_HOST = config['REDIS']['REDIS_HOST']
+REDIS_HOST = config.get('REDIS', 'REDIS_HOST')
 REDIS_PORT = config.getint('REDIS', 'REDIS_PORT')
 # it will expires in 3 days
 NEWS_TIME_OUT_IN_SECONDS = 3600 * 24 * 3
@@ -38,23 +38,12 @@ NEWS_SOURCES = [
     'the-washington-post'
 ]
 
-NEWS_CATEGORIES = [
-    'business',
-    'entertainment',
-    'general',
-    'health',
-    'science',
-    'sports',
-    'technology'
-]
-
 redis_client = redis.StrictRedis(REDIS_HOST, REDIS_PORT)
 cloudAMQP_client = CloudAMQPClient(
     SCRAPE_NEWS_TASK_QUEUE_URL, SCRAPE_NEWS_TASK_QUEUE_NAME)
 
 while True:
-    news_list = news_api_client.getNewsFromCategory(NEWS_CATEGORIES)
-    # news_list = news_api_client.getNewsFromSource(NEWS_SOURCES)
+    news_list = news_api_client.getNewsFromSource(NEWS_SOURCES)
     num_of_news_news = 0
 
     for news in news_list:
@@ -76,6 +65,6 @@ while True:
 
             cloudAMQP_client.sendMessage(news)
 
-    print("Fetched %d news." % num_of_news_news)
+    print "Fetched %d news." % num_of_news_news
 
     cloudAMQP_client.sleep(SLEEP_TIME_IN_SECONDS)

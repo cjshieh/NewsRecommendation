@@ -8,9 +8,9 @@ sudo python3 -m pip install -r requirements.txt
 
 # run newspipeline
 cd news_pipline
-python3 news_monitor.py &
+python news_monitor.py &
 python3 news_fetcher.py &
-python3 news_deduper.py &
+python news_deduper.py &
 
 echo "=================================================="
 read -p "PRESS [ANY KEY] TO TERMINATE PROCESSES." PRESSKEY

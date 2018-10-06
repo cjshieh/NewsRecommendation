@@ -28,7 +28,7 @@ def buildURL(endPoint=NEWS_API_PREFIX, apiMethod=TOP_NEWS_API):
 
 
 def extractMoreNews(article, url, payload, number_of_result):
-    totalPages = math.ceil(number_of_result / NEWS_PER_PAGE)
+    totalPages = int(math.ceil(number_of_result / NEWS_PER_PAGE))
     totalPages = LIMITS_OF_PAGES if totalPages > LIMITS_OF_PAGES else totalPages
     for page in range(PAGE_START, totalPages+1):
         payload['page'] = str(page)

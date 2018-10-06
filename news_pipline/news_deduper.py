@@ -11,17 +11,17 @@ currentdir = os.path.dirname(os.path.abspath(
 parentdir = os.path.dirname(currentdir)
 sys.path.append(os.path.join(parentdir, "common"))
 
+import classification_service_client
 from cloudAMQP_client import CloudAMQPClient
 import config_reader as reader
 import mongodb_client
 
 config = reader.read_config()
-DEDUPE_NEWS_TASK_QUEUE_URL = config['PIPELINE']['DEDUPE_QUEUE_URL']
-DEDUPE_NEWS_TASK_QUEUE_NAME = config['PIPELINE']['DEDUPE_QUEUE_NAME']
+DEDUPE_NEWS_TASK_QUEUE_URL = config.get('PIPELINE', 'DEDUPE_QUEUE_URL')
+DEDUPE_NEWS_TASK_QUEUE_NAME = config.get('PIPELINE', 'DEDUPE_QUEUE_NAME')
 SAME_NEWS_SIMILARITY_THRESHOLD = config.getfloat('PIPELINE', 'NEWS_SIMILARITY_THRESHOLD')
 SLEEP_TIME_IN_SECONDS = config.getint('PIPELINE', 'DEDUPER_SLEEP_TIME')
-NEWS_TABLE_NAME = "news-category"
-# NEWS_TABLE_NAME = "news"
+NEWS_TABLE_NAME = "news"
 
 cloudAMQP_client = CloudAMQPClient(
     DEDUPE_NEWS_TASK_QUEUE_URL, DEDUPE_NEWS_TASK_QUEUE_NAME)
@@ -68,6 +68,7 @@ def handle_message(msg):
                 return
 
     task['publishedAt'] = parser.parse(task['publishedAt'])
+    task['class'] = classification_service_client.classifyTopic(task['title'])
     db[NEWS_TABLE_NAME].replace_one(
         {'digest': task['digest']}, task, upsert=True)
 

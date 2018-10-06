@@ -10,5 +10,5 @@ client = pyjsonrpc.HttpClient(url=SERVER_URL)
 
 def classifyTopic(title):
     topic = client.call('classifyTopic', title)
-    print "The topic is: %s" % str(topic)
+    print "The topic is %s" % str(topic)
     return topic
