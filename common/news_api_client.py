@@ -9,12 +9,26 @@ NEWS_PER_PAGE = 100
 PAGE_START = 1
 LIMITS_OF_PAGES = 100
 TOP_NEWS_API = 'top-headlines'
+EVERYTHING_API = 'everything'
 
 BBC_NEWS = 'bbc-news'
 BBC_SPORT = 'bbc-sport'
 CNN = 'cnn'
 
-DEFAULT_SOURECES = [CNN, BBC_NEWS]
+DEFAULT_SOURECES = [
+    'bbc-news',
+    'bbc-sport',
+    'business-insider',
+    'cnn',
+    'entertainment-weekly',
+    'espn',
+    'fox-news',
+    'ign',
+    'techcrunch',
+    'the-new-york-times',
+    'the-wall-street-journal',
+    'the-washington-post'
+]
 DEFAULT_CATEGORY = ['business']
 COUNTRY = 'us'
 
@@ -89,5 +103,24 @@ def getNewsFromCategory(categories=DEFAULT_CATEGORY):
         if(goodToProcess):
             addAttributeToAll(res_json['articles'], category)
             acticles.extend(res_json['articles'])
+
+    return acticles
+
+
+def getNewsFromSearchKey(query, page_num=PAGE_START):
+    acticles = []
+    sourceURL = buildURL(NEWS_API_PREFIX, EVERYTHING_API)
+    allSources = concatSources(DEFAULT_SOURECES)
+    payload = {
+        'apiKey': NEW_API_KEY,
+        'q': str(query),
+        'sources': allSources,
+        'page': str(page_num)
+    }
+
+    res_json, goodToProcess = requestFromUrl(sourceURL, payload)
+    # Extract info from response
+    if(goodToProcess):
+        acticles.extend(res_json['articles'])
 
     return acticles

@@ -30,6 +30,15 @@ def test_getNewsSummariesForUser_pagination():
 
     print 'test_getNewsSummariesForUser_pagination passed!'
 
+def test_getNewsFromSearchKey():
+    news = operations.getNewsFromSearchKey('trump', 1)
+
+    assert len(news) > 0
+    assert 'class' in news[0]
+
+    print 'test_getNewsFromSearchKey passed!'
+
 if __name__ == "__main__":
     test_getNewsSummariesForUser_basic()
+    test_getNewsFromSearchKey()
     # test_getNewsSummariesForUser_pagination()

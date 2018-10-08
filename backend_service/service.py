@@ -27,6 +27,11 @@ class RequestHandler(pyjsonrpc.HttpRequestHandler):
     def getNewsSummariesForUser(self, user_id, page_num):
         return operations.getNewsSummariesForUser(user_id, page_num)
     
+    """ Get news summaries from search key """
+    @pyjsonrpc.rpcmethod
+    def getNewsFromSearchKey(self, query, page_num):
+        return operations.getNewsFromSearchKey(query, page_num)
+    
     """ Store user behavior """
     @pyjsonrpc.rpcmethod
     def logNewsClickForUser(self, user_id, news_id):

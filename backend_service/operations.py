@@ -6,15 +6,19 @@ import redis
 import sys
 
 from bson.json_util import dumps
+from dateutil import parser
 from datetime import datetime
 
 # import common package in parent directory
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
 
 import config_reader as reader
-from cloudAMQP_client import CloudAMQPClient
+import classification_service_client
 import mongodb_client
+import news_api_client
 import recommendation_service_client
+
+from cloudAMQP_client import CloudAMQPClient
 
 config = reader.read_config()
 REDIS_HOST = config.get('REDIS', 'REDIS_HOST')
@@ -43,7 +47,8 @@ def _formatNews(news, preference):
 
     for report in news:
         # Remove text field to save bandwidth.
-        del report['text']
+        if 'text' in report:
+            del report['text']
         if (topPreference is not None and 
             'class' in report and
             report['class'] is not None and
@@ -105,6 +110,14 @@ def getNewsDefault():
     part_news.sort(key=lambda x:x['publishedAt'], reverse=True)
     return _formatNews(part_news, None)
 
+
+def getNewsFromSearchKey(query, page_num):
+    news = news_api_client.getNewsFromSearchKey(query, page_num)
+    if news is not None and len(news) > 0:
+        for report in news:
+            report['class'] = classification_service_client.classifyTopic(report['title'])
+            report['publishedAt'] = parser.parse(report['publishedAt'])
+    return _formatNews(news, None)
 
 def logNewsClickForUser(user_id, news_id):
     message = { 'userId': user_id, 'newsId': news_id, 'timestamp':datetime.utcnow() }
