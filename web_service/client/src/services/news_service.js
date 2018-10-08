@@ -1,23 +1,32 @@
 import { authHeader } from "./helper/auth_header";
+import { newsClass } from "../constants";
+
 export const newsService = {
-  loadAll,
+  loadNewsByDefault,
   loadByCategory,
-  loadByPage,
+  loadByPageForUser,
   loadByQuery,
   storeBehaviour
 };
 
 const baseUrl = "http://localhost:3000";
-function loadAll() {
+function loadNewsByDefault() {
   const requestOptions = {
     method: "GET",
     headers: { "Content-Type": "application/json" }
   };
 
-  return fetch(`${baseUrl}/news`, requestOptions).then(handleResponse);
+  return fetch(`${baseUrl}/news/default`, requestOptions)
+    .then(handleResponse)
+    .then(news => {
+      return {
+        class: newsClass.DEFAULT,
+        news
+      };
+    });
 }
 
-function loadByPage(pageNum) {
+function loadByPageForUser(pageNum) {
   const user = JSON.parse(localStorage.getItem("user"));
   // console.log(user);
   const username = user ? user.username : "";
@@ -30,16 +39,18 @@ function loadByPage(pageNum) {
   return fetch(encodeURI(uri), requestOptions)
     .then(handleResponse)
     .then(news => {
-      if(!news || news.length === 0) {
+      if (!news || news.length === 0) {
         return {
+          class: newsClass.USER,
           allLoaded: true,
           news: []
-        }
+        };
       }
       return {
+        class: newsClass.USER,
         allLoaded: false,
         news
-      }
+      };
     });
 }
 
@@ -73,6 +84,6 @@ function handleResponse(response) {
       return Promise.reject(error);
     }
     // console.log(data);
-    return data;
+    return data.result;
   });
 }

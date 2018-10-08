@@ -97,6 +97,15 @@ def getNewsSummariesForUser(user_id, page_num):
     preference = recommendation_service_client.getPreferenceForUser(user_id)
     return _formatNews(sliced_news, preference)
 
+def getNewsDefault():
+    db = mongodb_client.get_db()
+    # Retrieve the newest version
+    total_news = list(db[NEWS_TABLE_NAME].find().sort([('publishedAt', -1)]).limit(NEWS_LIMIT))
+    part_news = random.sample(total_news, NEWS_LIST_BATCH_SIZE)
+    part_news.sort(key=lambda x:x['publishedAt'], reverse=True)
+    return _formatNews(part_news, None)
+
+
 def logNewsClickForUser(user_id, news_id):
     message = { 'userId': user_id, 'newsId': news_id, 'timestamp':datetime.utcnow() }
     db = mongodb_client.get_db()

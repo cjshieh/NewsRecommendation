@@ -1,29 +1,36 @@
+import _ from "lodash";
 import React, { Component } from "react";
-import { Card, Container } from "semantic-ui-react";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
+import { Card, Container, Segment } from "semantic-ui-react";
 import NewsCard from "../news_card/news_card";
 import Spiner from "../util/spinner";
 import "./news_panel.css";
-import _ from "lodash";
-import { connect } from "react-redux";
+
+import { newsClass } from "../../constants";
 import { newsActions } from "../../actions";
 
 class NewsPanel extends Component {
   constructor() {
     // super(props);
     super();
-    this.state = { pageNum:1 };
+    this.state = { pageNum: 1 };
     this.handleScroll = this.handleScroll.bind(this);
     this.disableScroll = this.disableScroll.bind(this);
     this.enableScroll = this.enableScroll.bind(this);
     this.preventDefault = this.preventDefault.bind(this);
-    this.preventDefaultForScrollKeys = 
-    this.preventDefaultForScrollKeys.bind(this);
+    this.preventDefaultForScrollKeys = this.preventDefaultForScrollKeys.bind(
+      this
+    );
   }
 
   componentDidMount() {
+    if (!this.props.loggedIn) {
+      this.props.dispatch(newsActions.loadNewsByDefault());
+      return;
+    }
     this.loadMoreNews();
     this.loadMoreNews = _.debounce(this.loadMoreNews, 1000);
-    console.log("control");
     this.enableScroll();
     window.addEventListener("scroll", this.handleScroll);
   }
@@ -39,38 +46,43 @@ class NewsPanel extends Component {
       document.documentElement.scrollTop;
 
     if (window.innerHeight + scrollY >= document.body.offsetHeight - 50) {
-      console.log("Loading more news");
       this.loadMoreNews();
     }
   }
 
   loadMoreNews() {
-    if(this.props.allLoaded) {
+    if (this.props.allLoaded) {
       return;
     }
 
-    this.props.dispatch(newsActions.loadByPage(this.state.pageNum));
-    this.setState({pageNum: this.state.pageNum+1});
+    this.props.dispatch(newsActions.loadByPageForUser(this.state.pageNum));
+    this.setState({ pageNum: this.state.pageNum + 1 });
   }
 
   renderNews() {
-    // return _.map(this.props.news, report => {
-    //   console.log(report);
-    //   return <NewsCard report={report} key={report.digest} />
-    // });
-    return Object.keys(this.props.news).map((digest) => {
-      return <NewsCard report={this.props.news[digest]} key={digest} />
+    if (!this.props.loggedIn) {
+      return this.props.newsDefault.map(report => {
+        return <NewsCard report={report} key={report.digest} />;
+      });
+    }
+    return Object.keys(this.props.newsForUser).map(digest => {
+      return <NewsCard report={this.props.newsForUser[digest]} key={digest} />;
     });
-    // return this.props.news.map((report, index) => {
-      // return <NewsCard report={report} key={report.digest} />;
-    // });
   }
 
   render() {
-    if (this.props.news) {
+    // if (this.props.newsForUser) {
+    if (this.props.newsDefault || this.props.newsForUser) {
       return (
         <Container>
           <Card.Group>{this.renderNews()}</Card.Group>
+          {!this.props.loggedIn &&
+            this.props.newsDefault.length !== 0 && (
+              <Segment vertical className="panel-message">
+                Want More? Please&#160;
+                <Link to="/login"> Log in</Link>
+              </Segment>
+            )}
         </Container>
       );
     } else {
@@ -78,7 +90,7 @@ class NewsPanel extends Component {
       return <Spiner />;
     }
   }
-  
+
   // Control scrolling event
   preventDefault(e) {
     e = e || window.event;
@@ -108,9 +120,12 @@ class NewsPanel extends Component {
   }
 }
 
-function mapStateToProps({ toggle, loader }) {
-  console.log(loader);
-  return { toggle, news: loader.news, allLoaded: loader.allLoaded };
+function mapStateToProps({ toggle, loader, authentication }) {
+  const { loggedIn } = authentication;
+  const newsForUser = loader[newsClass.USER]["news"];
+  const allLoadedForUser = loader[newsClass.USER]["allLoaded"];
+  const newsDefault = loader[newsClass.DEFAULT]["news"];
+  return { toggle, newsDefault, newsForUser, allLoadedForUser, loggedIn };
 }
 
 export default connect(mapStateToProps)(NewsPanel);

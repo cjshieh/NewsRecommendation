@@ -17,6 +17,11 @@ class RequestHandler(pyjsonrpc.HttpRequestHandler):
         print "add is call with %d and %d" % (a, b)
         return a + b
     
+    """ Get part news for anyone """
+    @pyjsonrpc.rpcmethod
+    def getNewsDefault(self):
+        return operations.getNewsDefault()
+
     """ Get news summaries for a user """
     @pyjsonrpc.rpcmethod
     def getNewsSummariesForUser(self, user_id, page_num):

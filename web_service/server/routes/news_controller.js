@@ -3,9 +3,14 @@ const router = express.Router();
 
 const rpc_client = require('../rpc_client/rpc_client_service');
 router.get('/userId/:userId/pageNum/:pageNum', getNewsSummary);
+router.get('/default', getDefault);
 router.post('/userId/:userId/newsId/:newsId', storeClicksLogs);
 
 module.exports = router;
+
+function getDefault(req, res, next) {
+  rpc_client.getNewsDefault(response => res.json(response));
+}
 
 function getNewsSummary(req, res, next) {
   user_id = req.params['userId'];
