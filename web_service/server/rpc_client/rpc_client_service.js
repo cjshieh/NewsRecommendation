@@ -8,6 +8,7 @@ const client = jayson.client.http({
 module.exports = {
     add,
     getNewsDefault,
+    getNewsFromSearchKey,
     getNewsSummariesForUser,
     logNewsClickForUser
 };
@@ -30,14 +31,20 @@ function getNewsDefault(callback) {
     })
 }
 
-function getNewsSummariesForUser(user_id, page_num, callback) {
-    console.log("load news is called");
-    client.request('getNewsSummariesForUser', [user_id, page_num], (err, response) => {
+function getNewsFromSearchKey(query, page_num, callback) {
+    client.request('getNewsFromSearchKey', [query, page_num], (err, response) => {
         if (err) {
-            console.log(err);
             throw err;
         }
-        // console.log(response);
+        callback(response);
+    });
+}
+
+function getNewsSummariesForUser(user_id, page_num, callback) {
+    client.request('getNewsSummariesForUser', [user_id, page_num], (err, response) => {
+        if (err) {
+            throw err;
+        }
         callback(response);
     });
 }

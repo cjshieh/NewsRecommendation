@@ -4,12 +4,22 @@ const router = express.Router();
 const rpc_client = require('../rpc_client/rpc_client_service');
 router.get('/userId/:userId/pageNum/:pageNum', getNewsSummary);
 router.get('/default', getDefault);
+router.get('/search/q/:query/pageNum/:pageNum', getNewsFromSearchKey);
 router.post('/userId/:userId/newsId/:newsId', storeClicksLogs);
 
 module.exports = router;
 
 function getDefault(req, res, next) {
   rpc_client.getNewsDefault(response => res.json(response));
+}
+
+function getNewsFromSearchKey(req, res, next) {
+  query = req.params['query'];
+  page_num = req.params['pageNum'];
+
+  console.log(query, page_num);
+
+  rpc_client.getNewsFromSearchKey(query, page_num, response => res.json(response));
 }
 
 function getNewsSummary(req, res, next) {

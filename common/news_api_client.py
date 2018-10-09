@@ -10,6 +10,7 @@ PAGE_START = 1
 LIMITS_OF_PAGES = 100
 TOP_NEWS_API = 'top-headlines'
 EVERYTHING_API = 'everything'
+SORT_KEY = 'publishedAt'
 
 BBC_NEWS = 'bbc-news'
 BBC_SPORT = 'bbc-sport'
@@ -115,7 +116,8 @@ def getNewsFromSearchKey(query, page_num=PAGE_START):
         'apiKey': NEW_API_KEY,
         'q': str(query),
         'sources': allSources,
-        'page': str(page_num)
+        'page': str(page_num),
+        'sortBy': SORT_KEY
     }
 
     res_json, goodToProcess = requestFromUrl(sourceURL, payload)
