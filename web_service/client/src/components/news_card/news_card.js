@@ -8,7 +8,6 @@ import "./news_card.css";
 class NewsCard extends React.Component {
   constructor(props) {
     super(props);
-    console.log(props);
   }
 
   redirectToUrl(url) {

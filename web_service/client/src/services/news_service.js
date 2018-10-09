@@ -11,12 +11,14 @@ export const newsService = {
 
 const baseUrl = "http://localhost:3000";
 function loadNewsByDefault() {
+  const uri = `${baseUrl}/news/default`;
   const requestOptions = {
     method: "GET",
-    headers: { "Content-Type": "application/json" }
+    headers: { "Content-Type": "application/json" },
+    cache: 'no-cache'
   };
-
-  return fetch(`${baseUrl}/news/default`, requestOptions)
+  const request = new Request(encodeURI(uri), requestOptions);
+  return fetch(request)
     .then(handleResponse)
     .then(news => {
       return {
@@ -33,10 +35,11 @@ function loadByPageForUser(pageNum) {
   const uri = `${baseUrl}/news/userId/${username}/pageNum/${pageNum}`;
   const requestOptions = {
     method: "GET",
-    headers: authHeader()
+    headers: authHeader(),
+    cache: 'no-cache'
   };
-  console.log(encodeURI(uri));
-  return fetch(encodeURI(uri), requestOptions)
+  const request = new Request(encodeURI(uri), requestOptions);
+  return fetch(request)
     .then(handleResponse)
     .then(news => {
       if (!news || news.length === 0) {

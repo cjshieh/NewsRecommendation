@@ -29,10 +29,19 @@ class NewsPanel extends Component {
       this.props.dispatch(newsActions.loadNewsByDefault());
       return;
     }
+    console.log("loggedIn requests");
     this.loadMoreNews();
     this.loadMoreNews = _.debounce(this.loadMoreNews, 1000);
     this.enableScroll();
     window.addEventListener("scroll", this.handleScroll);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!this.props.loggedIn && this.props.loggedIn !== prevProps.loggedIn) {
+      console.log("someone is logged out");
+      this.props.dispatch(newsActions.loadNewsByDefault());
+      return;
+    }
   }
 
   handleScroll() {
@@ -51,7 +60,7 @@ class NewsPanel extends Component {
   }
 
   loadMoreNews() {
-    if (this.props.allLoaded) {
+    if (this.props.allLoaded || !this.props.loggedIn) {
       return;
     }
 
