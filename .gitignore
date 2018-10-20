@@ -32,3 +32,6 @@ build/
 
 # model-learning
 learn_jupyter/
+
+# ignore IDE setting
+.vscode/
