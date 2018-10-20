@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 import pickle
@@ -37,8 +38,10 @@ CLICK_LOG_TABLE_NAME = config.get('NEWS', 'CLICK_LOG_TABLE_NAME')
 LOG_CLICKS_TASK_QUEUE_URL = config.get('PIPELINE', 'LOG_CLICKS_QUEUE_URL')
 LOG_CLICKS_TASK_QUEUE_NAME = config.get('PIPELINE', 'LOG_CLICKS_QUEUE_NAME')
 
-cloudAMQP_client = CloudAMQPClient(LOG_CLICKS_TASK_QUEUE_URL, LOG_CLICKS_TASK_QUEUE_NAME)
+cloudAMQP_client = CloudAMQPClient(
+    LOG_CLICKS_TASK_QUEUE_URL, LOG_CLICKS_TASK_QUEUE_NAME)
 redis_client = redis.StrictRedis(REDIS_HOST, REDIS_PORT, db=0)
+
 
 def _formatNews(news, preference):
     topPreference = None
@@ -49,17 +52,18 @@ def _formatNews(news, preference):
         # Remove text field to save bandwidth.
         if 'text' in report:
             del report['text']
-        if (topPreference is not None and 
+        if (topPreference is not None and
             'class' in report and
             report['class'] is not None and
-            report['class'] in topPreference ):
+                report['class'] in topPreference):
             report['reason'] = 'Recommend'
-        
+
         if report['publishedAt'].date() == datetime.today().date():
             report['time'] = 'today'
-        report['publishedAt'] = report['publishedAt'].strftime("%Y-%m-%d") 
+        report['publishedAt'] = report['publishedAt'].strftime("%Y-%m-%d")
     # Data formats for frontend usage
     return json.loads(dumps(news))
+
 
 def getNewsSummariesForUser(user_id, page_num):
     ''' Form a news lists based on page_number and user_id.
@@ -88,13 +92,15 @@ def getNewsSummariesForUser(user_id, page_num):
         print sliced_news_digests
         db = mongodb_client.get_db()
         # {'$in':sliced_news_digests} will search all digest in sliced_news_digest
-        sliced_news = list(db[NEWS_TABLE_NAME].find({'digest':{'$in':sliced_news_digests}}))
+        sliced_news = list(db[NEWS_TABLE_NAME].find(
+            {'digest': {'$in': sliced_news_digests}}))
     else:
         db = mongodb_client.get_db()
         # the newest one comes first
-        total_news = list(db[NEWS_TABLE_NAME].find().sort([('publishedAt', -1)]).limit(NEWS_LIMIT))
+        total_news = list(db[NEWS_TABLE_NAME].find().sort(
+            [('publishedAt', -1)]).limit(NEWS_LIMIT))
         # build a map maps from digest
-        total_news_digests = map(lambda x:x['digest'], total_news)
+        total_news_digests = map(lambda x: x['digest'], total_news)
         redis_client.set(user_id, pickle.dumps(total_news_digests))
         redis_client.expire(user_id, USER_NEWS_TIME_OUT_IN_SECONDS)
 
@@ -102,12 +108,14 @@ def getNewsSummariesForUser(user_id, page_num):
     preference = recommendation_service_client.getPreferenceForUser(user_id)
     return _formatNews(sliced_news, preference)
 
+
 def getNewsDefault():
     db = mongodb_client.get_db()
     # Retrieve the newest version
-    total_news = list(db[NEWS_TABLE_NAME].find().sort([('publishedAt', -1)]).limit(NEWS_LIMIT))
+    total_news = list(db[NEWS_TABLE_NAME].find().sort(
+        [('publishedAt', -1)]).limit(NEWS_LIMIT))
     part_news = random.sample(total_news, NEWS_LIST_BATCH_SIZE)
-    part_news.sort(key=lambda x:x['publishedAt'], reverse=True)
+    part_news.sort(key=lambda x: x['publishedAt'], reverse=True)
     return _formatNews(part_news, None)
 
 
@@ -115,16 +123,22 @@ def getNewsFromSearchKey(query, page_num):
     news = news_api_client.getNewsFromSearchKey(query, page_num)
     if news is not None and len(news) > 0:
         for report in news:
-            report['class'] = classification_service_client.classifyTopic(report['title'])
+            report['class'] = classification_service_client.classifyTopic(
+                report['title'])
             report['publishedAt'] = parser.parse(report['publishedAt'])
+            news_digest = hashlib.md5(report['title'].encode('utf-8')).digest().encode('base64')
+            report['digest'] = news_digest
     return _formatNews(news, None)
 
+
 def logNewsClickForUser(user_id, news_id):
-    message = { 'userId': user_id, 'newsId': news_id, 'timestamp':datetime.utcnow() }
+    message = {'userId': user_id, 'newsId': news_id,
+               'timestamp': datetime.utcnow()}
     db = mongodb_client.get_db()
     # For backup, we write into database
     db[CLICK_LOG_TABLE_NAME].insert(message)
 
     # send log task to process preference
-    message = { 'userId': user_id, 'newsId': news_id, 'timestamp':str(datetime.utcnow()) }
+    message = {'userId': user_id, 'newsId': news_id,
+               'timestamp': str(datetime.utcnow())}
     cloudAMQP_client.sendMessage(message)

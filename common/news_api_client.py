@@ -11,6 +11,7 @@ LIMITS_OF_PAGES = 100
 TOP_NEWS_API = 'top-headlines'
 EVERYTHING_API = 'everything'
 SORT_KEY = 'publishedAt'
+SOURCE_LANG = 'en'
 
 BBC_NEWS = 'bbc-news'
 BBC_SPORT = 'bbc-sport'
@@ -116,6 +117,7 @@ def getNewsFromSearchKey(query, page_num=PAGE_START):
         'apiKey': NEW_API_KEY,
         'q': str(query),
         'sources': allSources,
+        'language': SOURCE_LANG,
         'page': str(page_num),
         'sortBy': SORT_KEY
     }
