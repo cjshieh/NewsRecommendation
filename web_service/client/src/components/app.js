@@ -6,7 +6,7 @@ import NewsPanel from "./news_panel/news_panel";
 import NewsFeed from "./news_feed/news_feed";
 import { Icon, Menu, Sidebar, Segment, Sticky } from "semantic-ui-react";
 import { bindActionCreators } from "redux";
-import { Link ,Route, Switch } from "react-router-dom";
+import { Link, Route, Switch } from "react-router-dom";
 
 import "./app.css";
 
@@ -47,11 +47,11 @@ class App extends Component {
                   </Menu.Item>
                   <Menu.Item as="a">
                     <Icon name="fire" />
-                    Popular
+                    Today
                   </Menu.Item>
                 </Menu.Menu>
               </Menu.Item>
-
+{/*
               <Menu.Item>
                 <Menu.Header>Category</Menu.Header>
                 <Menu.Menu>
@@ -73,6 +73,7 @@ class App extends Component {
                   </Menu.Item>
                 </Menu.Menu>
               </Menu.Item>
+*/}
 {/*
               <Menu.Item as="div" style={{ height: "15em" }}>
                 Powers by NEWS API
@@ -83,6 +84,7 @@ class App extends Component {
             <Sidebar.Pusher dimmed={visible}>
               <Switch>
                 <Route path='/business' component={NewsFeed} />
+                <Route path='/result' component={NewsPanel} />
                 <Route path='/' component={NewsPanel} />
               </Switch>
             </Sidebar.Pusher>

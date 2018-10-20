@@ -26,25 +26,23 @@ function redirectToUrl(url) {
   window.open(url, '_blank');
 }
 
-const ItemExampleProps = () => (
-  <Container>
+const ItemExampleProps = ({report}) => (
   <Item.Group divided>
-    <Item onClick={() => redirectToUrl(items.url)}>
-      <Item.Image src={items.urlToImage} />
+    <Item onClick={() => redirectToUrl(report.url)}>
+      <Item.Image src={report.urlToImage} />
 
       <Item.Content>
-        <Item.Header as="a" src={items.url}>{items.title}</Item.Header>
+        <Item.Header as="a" src={report.url}>{report.title}</Item.Header>
         <Item.Meta>
-          <Icon name="clock outline" /> {items.publishedAt}
+          <Icon name="clock outline" /> {report.publishedAt}
         </Item.Meta>
-        <Item.Description>{items.description}</Item.Description>
+        <Item.Description>{report.description}</Item.Description>
         <Item.Extra>
-          <Label>{items.class}</Label>
+          <Label>{report.class}</Label>
         </Item.Extra>
       </Item.Content>
     </Item>
     </Item.Group>
-    </Container>
 );
 
 export default ItemExampleProps;

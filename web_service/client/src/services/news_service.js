@@ -5,7 +5,7 @@ export const newsService = {
   loadNewsByDefault,
   loadByCategory,
   loadByPageForUser,
-  loadByQuery,
+  loadBySearchKey,
   storeBehaviour
 };
 
@@ -62,9 +62,30 @@ function loadByCategory(category) {
   return;
 }
 
-function loadByQuery(queryKey) {
-  // TODO: load from the search bar
-  return;
+function loadBySearchKey(queryKey, pageNum) {
+  const spaceless = queryKey.trim();
+  // Normalized text without any punctuation and extra spaces betwen words
+  const punctuationless = spaceless.replace(/[.,/#!$%^&*;:{}=\-_`~()]/g,"");
+  const finalQuery= punctuationless.replace(/\s{2,}/g," ");
+  if(finalQuery.length === 0) {
+    return;
+  }
+  
+  const uri = `${baseUrl}/news/search/q/${finalQuery}/pageNum/${pageNum}`;
+  const requestOptions = {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+    cache: 'no-cache'
+  };
+  const request = new Request(encodeURI(uri), requestOptions);
+  return fetch(request)
+    .then(handleResponse)
+    .then(news => {
+      return {
+        class: newsClass.SEARCH,
+        news
+      };
+    });
 }
 
 function storeBehaviour(newsId) {

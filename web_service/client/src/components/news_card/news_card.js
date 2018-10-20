@@ -6,10 +6,6 @@ import { newsActions } from "../../actions";
 import "./news_card.css";
 
 class NewsCard extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   redirectToUrl(url) {
     window.open(url, "_blank");
   }
