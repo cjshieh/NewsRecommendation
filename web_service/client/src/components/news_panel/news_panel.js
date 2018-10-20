@@ -28,6 +28,10 @@ class NewsPanel extends Component {
   componentDidMount() {
     // if reloading happens in the search, show it.
     if (this.props.location.pathname === "/result") {
+      // console.log(this.props.location);
+      // this.props.dispatch(newsActions.requestSearch());
+      // const queryKey = this.props.location.search.match(/\?q=(.+)/i)[1];
+      // this.props.dispatch(newsActions.loadBySearchKey(queryKey));
       this.setState({ showResult: true });
       return;
     }
@@ -37,7 +41,6 @@ class NewsPanel extends Component {
     }
     this.loadMoreNews();
     this.loadMoreNews = _.debounce(this.loadMoreNews, 1000);
-    this.enableScroll();
     window.addEventListener("scroll", this.handleScroll);
   }
 
@@ -60,6 +63,9 @@ class NewsPanel extends Component {
       } else {
         console.log("page transfer, clear");
         this.props.dispatch(newsActions.clearSearchResult());
+        this.props.dispatch(
+          this.props.loggedIn ? newsActions.loadByPageForUser() : newsActions.loadNewsByDefault()
+        );
         this.setState({ showResult: false });
       }
     }
@@ -90,10 +96,11 @@ class NewsPanel extends Component {
   }
 
   renderNews() {
+    this.enableScroll();
     if (this.state.showResult) {
       console.log(this.props.results.length);
       return this.props.results.map(report => {
-        return <NewsFeed report={report} key={report.urlToImage} />;
+        return <NewsFeed report={report} key={report.digest} />;
       });
     }
 
@@ -108,17 +115,19 @@ class NewsPanel extends Component {
   }
 
   render() {
-    if (this.props.newsDefault || this.props.newsForUser) {
-      return (
-        <Container className="yu-news-panel">
-          <Card.Group>{this.renderNews()}</Card.Group>
-          {this.showEndingMessage()}
-        </Container>
-      );
-    } else {
+    if (
+      this.props.loadingSearch ||
+      (!this.props.newsDefault && !this.props.newsForUser)
+    ) {
       this.disableScroll();
       return <Spiner />;
     }
+    return (
+      <Container className="yu-news-panel">
+        <Card.Group>{this.renderNews()}</Card.Group>
+        {this.showEndingMessage()}
+      </Container>
+    );
   }
 
   showEndingMessage() {
@@ -127,10 +136,9 @@ class NewsPanel extends Component {
       if (this.props.results.length === 0) {
         return (
           <Segment vertical className="panel-message">
-            No results 
+            No results
           </Segment>
         );
-      } else if (this.props.results.length < 20) {
       }
     }
     if (!this.props.loggedIn && this.props.newsDefault.length !== 0) {
@@ -178,9 +186,11 @@ function mapStateToProps({ toggle, loader, authentication }) {
   const allLoadedForUser = loader[newsClass.USER]["allLoaded"];
   const newsDefault = loader[newsClass.DEFAULT]["news"];
   const results = loader[newsClass.SEARCH]["news"];
+  const loadingSearch = loader[newsClass.SEARCH]["loading"];
   return {
     allLoadedForUser,
     loggedIn,
+    loadingSearch,
     newsDefault,
     newsForUser,
     results,

@@ -1,4 +1,5 @@
 export const newsConstants = {
+    SEARCH_REQUEST: 'SEARCH_REQUEST',
     CLEAR_REQUEST: 'CLEAR_SEARCH_REQUEST',
     
     LOAD_SUCCESS: 'NEWS_LOADED_SUCCESS',

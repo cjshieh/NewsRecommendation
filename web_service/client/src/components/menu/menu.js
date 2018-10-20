@@ -19,9 +19,18 @@ class Menu extends React.Component {
     this.onInputChange = this.onInputChange.bind(this);
   }
 
-  // componentDidMount() {
-  //   console.log(this.props.location);
-  // }
+  componentDidMount() {
+    if (this.props.location.pathname === "/result") {
+      // console.log(this.props.location);
+      this.props.requestSearch();
+      const queryKey = this.props.location.search.match(/\?q=(.+)/i)[1];
+      this.setState({term: queryKey});
+      this.props.loadBySearchKey(queryKey);
+      this.setState({ showResult: true });
+      return;
+    }
+    return;
+  }
 
   toggleHidden() {
     this.setState({
@@ -45,6 +54,7 @@ class Menu extends React.Component {
       this.props.history.push('/');
       return;
     }
+    this.props.requestSearch();
     this.props.clearSearch();
     this.props.loadBySearchKey(queryKey);
     this.props.history.push(`/result?q=${queryKey}`);
@@ -141,6 +151,7 @@ function mapDispatchToProps(dispatch) {
       toggleDrawer: interActions.toggleDrawer,
       logout: userActions.logout,
       loadBySearchKey: newsActions.loadBySearchKey,
+      requestSearch: newsActions.requestSearch,
       clearSearch: newsActions.clearSearchResult
     },
     dispatch
