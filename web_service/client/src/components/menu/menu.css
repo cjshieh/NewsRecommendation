@@ -9,7 +9,7 @@
   z-index: 200;
 }
 .menu-container::before {
-  bottom: -5px;
+  top: 56px;
   box-shadow: inset 0px 4px 8px -3px rgba(17, 17, 17, 0.06);
   content: "";
   height: 5px;
@@ -26,7 +26,8 @@
   margin: 0 16px 0 0;
   width: 40px;
   height: 40px;
-  display: inline-flex;
+  /* display: inline-flex; */
+  display: none;
   position: relative;
   justify-content: center;
   align-items: center;

@@ -2,7 +2,7 @@ import _ from "lodash";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { Card, Container, Segment } from "semantic-ui-react";
+import { Card, Container, Item, Segment } from "semantic-ui-react";
 import NewsCard from "../news_card/news_card";
 import NewsFeed from "../news_feed/news_feed";
 import Spiner from "../util/spinner";
@@ -13,7 +13,6 @@ import { newsActions } from "../../actions";
 
 class NewsPanel extends Component {
   constructor() {
-    // super(props);
     super();
     this.state = { pageNum: 1, showResult: false };
     this.handleScroll = this.handleScroll.bind(this);
@@ -24,17 +23,18 @@ class NewsPanel extends Component {
       this
     );
   }
-
+  // when component first time loaded, it will be triggered.
   componentDidMount() {
     // if reloading happens in the search, show it.
     if (this.props.location.pathname === "/result") {
       this.setState({ showResult: true });
-      return;
     }
+    // if user is not logged in, we won't provide infinite scroll service
     if (!this.props.loggedIn) {
       this.props.dispatch(newsActions.loadNewsByDefault());
       return;
     }
+
     this.loadMoreNews();
     this.loadMoreNews = _.debounce(this.loadMoreNews, 1000);
     window.addEventListener("scroll", this.handleScroll);
@@ -49,13 +49,20 @@ class NewsPanel extends Component {
       this.setState({ pageNum: 1 });
       return;
     }
+    if (this.props.location !== prevProps.location) {
+      this.props.dispatch(
+        this.props.loggedIn
+          ? newsActions.loadByPageForUser()
+          : newsActions.loadNewsByDefault()
+      );
+    }
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.location !== this.props.location) {
       // reset pageNum
       console.log("reset pageNum");
-      this.setState({pageNum: 1});
+      this.setState({ pageNum: 1 });
       // if routing to search result, show it
       if (nextProps.location.pathname === "/result") {
         // console.log("Show results");
@@ -65,18 +72,12 @@ class NewsPanel extends Component {
         console.log("page transfer, clear");
         // handle the user browsing from search to user
         this.props.dispatch(newsActions.clearSearchResult());
-        this.props.dispatch(
-          this.props.loggedIn
-            ? newsActions.loadByPageForUser()
-            : newsActions.loadNewsByDefault()
-        );
         this.setState({ showResult: false });
       }
     }
   }
 
   handleScroll() {
-    // FIXME: prevent background scrolling
     if (this.props.toggle.visible) {
       return;
     }
@@ -97,7 +98,11 @@ class NewsPanel extends Component {
     console.log(this.state.pageNum);
     this.props.dispatch(
       this.state.showResult
-        ? newsActions.loadBySearchKey(this._gettQueryKey(), this.state.pageNum)
+        ? // search page number's has an offset 1 because the first query request is from menu component
+          newsActions.loadBySearchKey(
+            this._gettQueryKey(),
+            this.state.pageNum + 1
+          )
         : newsActions.loadByPageForUser(this.state.pageNum)
     );
     this.setState({ pageNum: this.state.pageNum + 1 });
@@ -106,19 +111,32 @@ class NewsPanel extends Component {
   renderNews() {
     this.enableScroll();
     if (this.state.showResult) {
-      return Object.keys(this.props.results).map(digest => {
-        return <NewsFeed report={this.props.results[digest]} key={digest} />;
-      });
+      return (
+        <Item.Group>
+          {Object.keys(this.props.results).map(digest => {
+            return (
+              <NewsFeed report={this.props.results[digest]} key={digest} />
+            );
+          })}
+        </Item.Group>
+      );
     }
-
-    if (!this.props.loggedIn) {
-      return this.props.newsDefault.map(report => {
-        return <NewsCard report={report} key={report.digest} />;
-      });
-    }
-    return Object.keys(this.props.newsForUser).map(digest => {
-      return <NewsCard report={this.props.newsForUser[digest]} key={digest} />;
-    });
+    return (
+      <Card.Group>
+        {!this.props.loggedIn
+          ? this.props.newsDefault.map(report => {
+              return <NewsCard report={report} key={report.digest} />;
+            })
+          : Object.keys(this.props.newsForUser).map(digest => {
+              return (
+                <NewsCard
+                  report={this.props.newsForUser[digest]}
+                  key={digest}
+                />
+              );
+            })}
+      </Card.Group>
+    );
   }
 
   render() {
@@ -131,7 +149,7 @@ class NewsPanel extends Component {
     }
     return (
       <Container className="yu-news-panel">
-        <Card.Group>{this.renderNews()}</Card.Group>
+        {this.renderNews()}
         {this.showEndingMessage()}
       </Container>
     );
@@ -140,7 +158,7 @@ class NewsPanel extends Component {
   showEndingMessage() {
     // TODO: if the length of search result is < 20 don't show
     if (this.state.showResult) {
-      if (this.props.results.length === 0) {
+      if (Object.keys(this.props.results).length === 0) {
         return (
           <Segment vertical className="panel-message">
             No results

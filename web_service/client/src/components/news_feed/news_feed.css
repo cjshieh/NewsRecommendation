@@ -1,3 +1,7 @@
 .items:hover {
     cursor: pointer;
 }
+
+.itmes {
+    width: 4vh;
+}

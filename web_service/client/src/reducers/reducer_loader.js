@@ -2,15 +2,7 @@ import { newsConstants } from "../constants";
 import { newsClass } from "../constants";
 import _ from "lodash";
 
-const initialState = {};
-initialState[newsClass.USER] = {
-  allLoaded: false,
-  news: {}
-};
-initialState[newsClass.SEARCH] = { loading: false, loaded: false, news: {} };
-initialState[newsClass.DEFAULT] = { news: [] };
-
-export function loader(state = initialState, action) {
+export function loader(state = createInit(), action) {
   const nextState = { ...state };
   switch (action.type) {
     case newsConstants.LOAD_SUCCESS: {
@@ -37,9 +29,7 @@ export function loader(state = initialState, action) {
       return nextState;
     }
     case newsConstants.CLEAR_REQUEST: {
-      nextState[newsClass.SEARCH]["loaded"] = false;
-      nextState[newsClass.SEARCH]["news"] = [];
-      return nextState;
+      return createInit();
     }
     case newsConstants.LOAD_FAILURE:
       return state;
@@ -59,4 +49,15 @@ function concatNews(prevState, data) {
     ...prevState,
     ..._.mapKeys(data, "digest")
   };
+}
+
+function createInit() {
+  const initialState = {};
+  initialState[newsClass.USER] = {
+    allLoaded: false,
+    news: {}
+  };
+  initialState[newsClass.SEARCH] = { loading: false, loaded: false, news: {} };
+  initialState[newsClass.DEFAULT] = { news: [] };
+  return initialState;
 }

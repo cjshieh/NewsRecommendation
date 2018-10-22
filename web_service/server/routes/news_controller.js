@@ -14,7 +14,7 @@ function getDefault(req, res, next) {
 }
 
 function getNewsFromSearchKey(req, res, next) {
-  query = req.params['query'];
+  query = decodeURIComponent(req.params['query']);
   page_num = req.params['pageNum'];
 
   console.log(query, page_num);

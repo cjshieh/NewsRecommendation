@@ -65,7 +65,8 @@ function loadByCategory(category) {
 function loadBySearchKey(queryKey, pageNum) {
   const spaceless = queryKey.trim();
   // Normalized text without any punctuation and extra spaces betwen words
-  const punctuationless = spaceless.replace(/[.,/#!$%^&*;:{}=\-_`~()]/g,"");
+  const punctuationless = spaceless.replace(/^[.,/#!$%^&*;:{}=\-_`~()]/g,"");
+  console.log(punctuationless);
   const finalQuery= punctuationless.replace(/\s{2,}/g," ");
   if(finalQuery.length === 0) {
     return;

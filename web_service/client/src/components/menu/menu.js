@@ -18,7 +18,7 @@ class Menu extends React.Component {
     this.onSubmission = this.onSubmission.bind(this);
     this.onInputChange = this.onInputChange.bind(this);
   }
-
+  // menu component handle first time querying
   componentDidMount() {
     if (this.props.location.pathname === "/result") {
       // console.log(this.props.location);
@@ -28,10 +28,10 @@ class Menu extends React.Component {
       this.props.loadBySearchKey(queryKey);
       return;
     }
-    return;
   }
 
   toggleHidden() {
+    console.log("click hidden");
     this.setState({
       isHidden: !this.state.isHidden
     });
@@ -43,20 +43,24 @@ class Menu extends React.Component {
 
   onSubmission(e) {
     e.preventDefault();
+    
     const queryKey = this.state.term;
     const spaceless = queryKey.trim();
     // Normalized text without any punctuation and extra spaces betwen words
-    const punctuationless = spaceless.replace(/[.,/#!$%^&*;:{}=\-_`~()[\]]/g, "");
+    const punctuationless = spaceless.replace(/^[.,/#!$%^&*;:{}=\-_`~()[\]]/g, "");
+    console.log(punctuationless);
     const finalQuery = punctuationless.replace(/\s{2,}/g, " ");
     // Handle the empty search query
     if (finalQuery.length === 0) {
       this.props.history.push('/');
       return;
     }
+    this.props.clearSearch(); 
     this.props.requestSearch();
-    this.props.clearSearch();
     this.props.loadBySearchKey(queryKey);
+    // this.setState({isHidden: !this.state.isHidden});
     this.props.history.push(`/result?q=${queryKey}`);
+    // this.setState({isHidden: true});
   }
 
   render() {
@@ -132,7 +136,9 @@ class Menu extends React.Component {
                   icon="sign-out"
                   text="logout"
                   onClick={() => {
+                    this.props.history.push('/');
                     this.props.logout();
+                    this.setState({term: ""});
                   }}
                 />
               </Dropdown.Menu>
