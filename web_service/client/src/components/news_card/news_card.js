@@ -28,7 +28,11 @@ class NewsCard extends React.Component {
         onClick={() =>
           this.handleClick(this.props.report.url, this.props.report.digest)
         }>
-        <Image src={this.props.report.urlToImage ? this.props.report.urlToImage: placeHolder} />
+        <Image src={this.props.report.urlToImage ? this.props.report.urlToImage: placeHolder} onError={(event) => {
+          console.log("loaded failed");
+          // console.log(event.target.src);
+          event.target.src = placeHolder;
+        }} />
         <Card.Content>
           <Card.Header as="h3" className="fade">
             <Markup content={this.props.report.title} />

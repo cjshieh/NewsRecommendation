@@ -15,8 +15,7 @@ class App extends Component {
 
   handleContextRef = contextRef => {
     this.setState({ contextRef });
-  }
-  
+  };
 
   render() {
     const { visible } = this.props.toggle;
@@ -27,7 +26,12 @@ class App extends Component {
           <YuMenu />
         </Sticky>
 
-        <div className="inner" ref={this.handleContextRef}>
+        <div
+          className="inner"
+          ref={this.handleContextRef}
+          onClick={() => {
+            this.props.hideSearchForm();
+          }}>
           <Sidebar.Pushable as={Segment} className="yn-sidebar">
             <Sidebar
               as={Menu}
@@ -51,7 +55,7 @@ class App extends Component {
                   </Menu.Item>
                 </Menu.Menu>
               </Menu.Item>
-{/*
+              {/*
               <Menu.Item>
                 <Menu.Header>Category</Menu.Header>
                 <Menu.Menu>
@@ -74,7 +78,7 @@ class App extends Component {
                 </Menu.Menu>
               </Menu.Item>
 */}
-{/*
+              {/*
               <Menu.Item as="div" style={{ height: "15em" }}>
                 Powers by NEWS API
               </Menu.Item>
@@ -83,9 +87,9 @@ class App extends Component {
 
             <Sidebar.Pusher dimmed={visible}>
               <Switch>
-                <Route path='/business' component={NewsFeed} />
-                <Route path='/result' component={NewsPanel} />
-                <Route path='/' component={NewsPanel} />
+                <Route path="/business" component={NewsFeed} />
+                <Route path="/result" component={NewsPanel} />
+                <Route path="/" component={NewsPanel} />
               </Switch>
             </Sidebar.Pusher>
           </Sidebar.Pushable>
@@ -96,16 +100,17 @@ class App extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ hideDrawer: interActions.hideDrawer }, dispatch);
+  return bindActionCreators(
+    {
+      hideDrawer: interActions.hideDrawer,
+      hideSearchForm: interActions.hideSearchMobie
+    },
+    dispatch
+  );
 }
 
-function mapStateToProps(state) {
-  const obj = { toggle: state.toggle };
-  // console.group();
-  // console.log("Get from component mapStateToProps");
-  // console.log(obj.toggle);
-  // console.groupEnd();
-  return obj;
+function mapStateToProps({ interaction }) {
+  return { toggle: interaction.drawer_visible };
 }
 
 export default connect(

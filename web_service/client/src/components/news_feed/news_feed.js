@@ -14,7 +14,7 @@ const NewsItemProps = ({ report }) => (
       src={report.urlToImage}
       onError={(event) => {
         // console.log("loaded failed");
-        event.target.src = require(placeHolder)
+        event.target.src = placeHolder;
       }} /> :
       <Item.Image
         src={placeHolder} />

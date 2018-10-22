@@ -1,17 +1,16 @@
-import { combineReducers } from 'redux';
-import DrawerReduecer from './reducer_toggle_drawer';
-import { alert } from './reducer_alert';
-import { authentication } from './reducer_authentication';
-import { loader } from './reducer_loader';
-import { registration} from './reducer_registration';
-// import { reducer as formReducer } from 'redux-form';
+import { combineReducers } from "redux";
+import { alert } from "./reducer_alert";
+import { authentication } from "./reducer_authentication";
+import { loader } from "./reducer_loader";
+import { interaction } from "./reducer_ui_interactions";
+import { registration } from "./reducer_registration";
 
 const rootReducer = combineReducers({
-    toggle: DrawerReduecer,
-    alert,
-    authentication,
-    loader,
-    registration
+  alert,
+  authentication,
+  loader,
+  interaction,
+  registration
 });
 
 export default rootReducer;

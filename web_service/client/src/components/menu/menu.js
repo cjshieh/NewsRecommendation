@@ -1,6 +1,7 @@
 import React from "react";
+import _ from "lodash";
 import { connect } from "react-redux";
-import { interActions, userActions, newsActions} from "../../actions/index";
+import { interActions, userActions, newsActions } from "../../actions/index";
 import { Button, Dropdown, Form, Icon, Image, Input } from "semantic-ui-react";
 import Logo from "../../assets/Logo.png";
 import "./menu.css";
@@ -11,12 +12,17 @@ class Menu extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isHidden: false,
       term: ""
     };
     this.toggleHidden = this.toggleHidden.bind(this);
     this.onSubmission = this.onSubmission.bind(this);
     this.onInputChange = this.onInputChange.bind(this);
+    window.addEventListener('resize', _.debounce(() => {
+      const width = window.innerWidth;
+      if (width > 656 && this.props.isHidden) {
+        this.props.hideSearchBar();
+      }
+    }, 50));
   }
   // menu component handle first time querying
   componentDidMount() {
@@ -24,17 +30,14 @@ class Menu extends React.Component {
       // console.log(this.props.location);
       this.props.requestSearch();
       const queryKey = this.props.location.search.match(/\?q=(.+)/i)[1];
-      this.setState({term: queryKey});
+      this.setState({ term: queryKey });
       this.props.loadBySearchKey(queryKey);
       return;
     }
   }
 
   toggleHidden() {
-    console.log("click hidden");
-    this.setState({
-      isHidden: !this.state.isHidden
-    });
+    this.props.toggleSearchBar();
   }
 
   onInputChange(e) {
@@ -43,22 +46,25 @@ class Menu extends React.Component {
 
   onSubmission(e) {
     e.preventDefault();
-    
+
     const queryKey = this.state.term;
     const spaceless = queryKey.trim();
     // Normalized text without any punctuation and extra spaces betwen words
-    const punctuationless = spaceless.replace(/^[.,/#!$%^&*;:{}=\-_`~()[\]]/g, "");
+    const punctuationless = spaceless.replace(
+      /^[.,/#!$%^&*;:{}=\-_`~()[\]]/g,
+      ""
+    );
     console.log(punctuationless);
     const finalQuery = punctuationless.replace(/\s{2,}/g, " ");
     // Handle the empty search query
     if (finalQuery.length === 0) {
-      this.props.history.push('/');
+      this.props.history.push("/");
       return;
     }
-    this.props.clearSearch(); 
+    this.props.clearSearch();
     this.props.requestSearch();
     this.props.loadBySearchKey(queryKey);
-    // this.setState({isHidden: !this.state.isHidden});
+    // this.setState({isHidden: !this.props.isHidden});
     this.props.history.push(`/result?q=${queryKey}`);
     // this.setState({isHidden: true});
   }
@@ -66,7 +72,7 @@ class Menu extends React.Component {
   render() {
     return (
       <div className="menu-container">
-        <div className={this.state.isHidden ? "mobile-search" : "back-arrow"}>
+        <div className={this.props.isHidden ? "mobile-search" : "back-arrow"}>
           <Button className="yn-button" onClick={this.toggleHidden}>
             <Icon name="arrow left" size="large" />
           </Button>
@@ -74,7 +80,7 @@ class Menu extends React.Component {
 
         <div
           id="guide-bar"
-          className={this.state.isHidden ? "hidden" : "guide-bar"}>
+          className={this.props.isHidden ? "hidden" : "guide-bar"}>
           <Button
             className="yn-button"
             onClick={() => this.props.toggleDrawer()}>
@@ -84,7 +90,7 @@ class Menu extends React.Component {
 
         <div
           id="logo"
-          className={this.state.isHidden ? "hidden" : "yu-logo-smash"}>
+          className={this.props.isHidden ? "hidden" : "yu-logo-smash"}>
           <Link
             id="logo-container"
             to="/"
@@ -95,7 +101,7 @@ class Menu extends React.Component {
 
         <div
           id="search"
-          className={this.state.isHidden ? "mobile-search" : "yu-search-smash"}>
+          className={this.props.isHidden ? "mobile-search" : "yu-search-smash"}>
           <Form className="search-box" onSubmit={this.onSubmission}>
             <Input
               className="search-box-input"
@@ -108,7 +114,7 @@ class Menu extends React.Component {
           </Form>
         </div>
 
-        <div id="end" className={this.state.isHidden ? "hidden" : "end"}>
+        <div id="end" className={this.props.isHidden ? "hidden" : "end"}>
           <Button className="yn-search-end" onClick={this.toggleHidden}>
             <Icon name="search" />
           </Button>
@@ -136,9 +142,9 @@ class Menu extends React.Component {
                   icon="sign-out"
                   text="logout"
                   onClick={() => {
-                    this.props.history.push('/');
+                    this.props.history.push("/");
                     this.props.logout();
-                    this.setState({term: ""});
+                    this.setState({ term: "" });
                   }}
                 />
               </Dropdown.Menu>
@@ -153,26 +159,31 @@ class Menu extends React.Component {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      toggleDrawer: interActions.toggleDrawer,
+      clearSearch: newsActions.clearSearchResult,
+      hideSearchBar: interActions.hideSearchMobie,
       logout: userActions.logout,
       loadBySearchKey: newsActions.loadBySearchKey,
       requestSearch: newsActions.requestSearch,
-      clearSearch: newsActions.clearSearchResult
+      toggleDrawer: interActions.toggleDrawer,
+      toggleSearchBar: interActions.toggleSearchMobie
     },
     dispatch
   );
 }
 
-function mapStateToProps(state) {
-  const { loggedIn, user } = state.authentication;
+function mapStateToProps({authentication, interaction}) {
+  const { loggedIn, user } = authentication;
+  const isHidden = interaction.search_form_visible;
   if (user === null) {
     return {
-      loggedIn
+      loggedIn,
+      isHidden
     };
   }
 
   const name = user.username;
   return {
+    isHidden,
     loggedIn,
     name
   };
