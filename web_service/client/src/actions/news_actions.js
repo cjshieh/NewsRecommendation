@@ -61,7 +61,7 @@ function loadBySearchKey(query, pageNum=1) {
     function failure(error) { return { type: newsConstants.LOAD_FAILURE, error } } 
 }
 
-function loadByPageForUser(pageNum) {
+function loadByPageForUser(pageNum=1) {
     return dispatch => {
         newsService.loadByPageForUser(pageNum)
             .then(

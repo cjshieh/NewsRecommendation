@@ -26,7 +26,6 @@ class Menu extends React.Component {
       const queryKey = this.props.location.search.match(/\?q=(.+)/i)[1];
       this.setState({term: queryKey});
       this.props.loadBySearchKey(queryKey);
-      this.setState({ showResult: true });
       return;
     }
     return;

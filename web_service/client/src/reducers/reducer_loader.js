@@ -7,7 +7,7 @@ initialState[newsClass.USER] = {
   allLoaded: false,
   news: {}
 };
-initialState[newsClass.SEARCH] = { loading: false, loaded: false, news: [] };
+initialState[newsClass.SEARCH] = { loading: false, loaded: false, news: {} };
 initialState[newsClass.DEFAULT] = { news: [] };
 
 export function loader(state = initialState, action) {
@@ -15,19 +15,16 @@ export function loader(state = initialState, action) {
   switch (action.type) {
     case newsConstants.LOAD_SUCCESS: {
       if (action.data.class === newsClass.DEFAULT) {
-        nextState[newsClass.DEFAULT]["news"] = action.data.news
-      } else if (action.data.class === newsClass.USER) {
-        nextState[action.data.class]["news"] = {
-          ...state[action.data.class]["news"],
-          ..._.mapKeys(action.data.news, "digest")
-        };
+        nextState[newsClass.DEFAULT]["news"] = action.data.news;
+        return nextState;
       } else if (action.data.class === newsClass.SEARCH) {
-        nextState[action.data.class]["loading"] = false;
-        nextState[action.data.class]["loaded"] = true;
-        nextState[action.data.class]["news"] = state[action.data.class][
-          "news"
-        ].concat(action.data.news);
+        nextState[newsClass.SEARCH]["loading"] = false;
+        nextState[newsClass.SEARCH]["loaded"] = true;
       }
+      nextState[action.data.class]["news"] = concatNews(
+        state[action.data.class]["news"],
+        action.data.news
+      );
       return nextState;
     }
     case newsConstants.LOAD_ALL_SUCCESS: {
@@ -40,7 +37,7 @@ export function loader(state = initialState, action) {
       return nextState;
     }
     case newsConstants.CLEAR_REQUEST: {
-      nextState[newsClass.SEARCH]["loaded"] = false; 
+      nextState[newsClass.SEARCH]["loaded"] = false;
       nextState[newsClass.SEARCH]["news"] = [];
       return nextState;
     }
@@ -49,4 +46,17 @@ export function loader(state = initialState, action) {
     default:
       return state;
   }
+}
+
+function concatNews(prevState, data) {
+  // console.log(data);
+  if (data.length < 1) {
+    console.log("no data");
+    return prevState;
+  }
+
+  return {
+    ...prevState,
+    ..._.mapKeys(data, "digest")
+  };
 }

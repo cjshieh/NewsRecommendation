@@ -28,10 +28,6 @@ class NewsPanel extends Component {
   componentDidMount() {
     // if reloading happens in the search, show it.
     if (this.props.location.pathname === "/result") {
-      // console.log(this.props.location);
-      // this.props.dispatch(newsActions.requestSearch());
-      // const queryKey = this.props.location.search.match(/\?q=(.+)/i)[1];
-      // this.props.dispatch(newsActions.loadBySearchKey(queryKey));
       this.setState({ showResult: true });
       return;
     }
@@ -49,12 +45,17 @@ class NewsPanel extends Component {
     if (!this.props.loggedIn && this.props.loggedIn !== prevProps.loggedIn) {
       // console.log("someone is logged out");
       this.props.dispatch(newsActions.loadNewsByDefault());
+      // reset pageNum to 1
+      this.setState({ pageNum: 1 });
       return;
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.location !== this.props.location) {
+      // reset pageNum
+      console.log("reset pageNum");
+      this.setState({pageNum: 1});
       // if routing to search result, show it
       if (nextProps.location.pathname === "/result") {
         // console.log("Show results");
@@ -62,9 +63,12 @@ class NewsPanel extends Component {
         return;
       } else {
         console.log("page transfer, clear");
+        // handle the user browsing from search to user
         this.props.dispatch(newsActions.clearSearchResult());
         this.props.dispatch(
-          this.props.loggedIn ? newsActions.loadByPageForUser() : newsActions.loadNewsByDefault()
+          this.props.loggedIn
+            ? newsActions.loadByPageForUser()
+            : newsActions.loadNewsByDefault()
         );
         this.setState({ showResult: false });
       }
@@ -90,17 +94,20 @@ class NewsPanel extends Component {
     if (this.props.allLoaded || !this.props.loggedIn) {
       return;
     }
-
-    this.props.dispatch(newsActions.loadByPageForUser(this.state.pageNum));
+    console.log(this.state.pageNum);
+    this.props.dispatch(
+      this.state.showResult
+        ? newsActions.loadBySearchKey(this._gettQueryKey(), this.state.pageNum)
+        : newsActions.loadByPageForUser(this.state.pageNum)
+    );
     this.setState({ pageNum: this.state.pageNum + 1 });
   }
 
   renderNews() {
     this.enableScroll();
     if (this.state.showResult) {
-      console.log(this.props.results.length);
-      return this.props.results.map(report => {
-        return <NewsFeed report={report} key={report.digest} />;
+      return Object.keys(this.props.results).map(digest => {
+        return <NewsFeed report={this.props.results[digest]} key={digest} />;
       });
     }
 
@@ -177,6 +184,11 @@ class NewsPanel extends Component {
     window.onwheel = null;
     window.ontouchmove = null;
     document.onkeydown = null;
+  }
+
+  _gettQueryKey() {
+    const queryKey = this.props.location.search.match(/\?q=(.+)/i)[1];
+    return queryKey;
   }
 }
 
