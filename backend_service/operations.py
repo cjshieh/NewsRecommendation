@@ -65,7 +65,7 @@ def _formatNews(news, preference):
     return json.loads(dumps(news))
 
 
-def getNewsSummariesForUser(user_id, page_num):
+def getNewsSummariesForUser(user_id, page_num="1"):
     ''' Form a news lists based on page_number and user_id.
 
     Keyword arguments:
@@ -121,14 +121,19 @@ def getNewsDefault():
 
 def getNewsFromSearchKey(query, page_num):
     news = news_api_client.getNewsFromSearchKey(query, page_num)
+    articles = []
     if news is not None and len(news) > 0:
         for report in news:
+            if report['title'] is None:
+                continue
             report['class'] = classification_service_client.classifyTopic(
                 report['title'])
-            report['publishedAt'] = parser.parse(report['publishedAt'])
+            report['publishedAt'] = parser.parse(report['publishedAt']).strftime("%Y-%m-%d")
             news_digest = hashlib.md5(report['title'].encode('utf-8')).digest().encode('base64')
             report['digest'] = news_digest
-    return _formatNews(news, None)
+            articles.append(report)
+        return articles
+    return news
 
 
 def logNewsClickForUser(user_id, news_id):
