@@ -1,5 +1,6 @@
 import React from "react";
 import { Icon, Item, Label } from "semantic-ui-react";
+import placeHolder from "../../assets/LogoMakr_9Pcd4O.png";
 import "./news_feed.css";
 
 function redirectToUrl(url) {
@@ -8,12 +9,16 @@ function redirectToUrl(url) {
 
 const NewsItemProps = ({ report }) => (
   <Item onClick={() => redirectToUrl(report.url)}>
-    <Item.Image
+    {report.urlToImage ? 
+      <Item.Image
       src={report.urlToImage}
-      onLoad={() => {
-        console.log("image loaded success");
-      }}
-    />
+      onError={(event) => {
+        // console.log("loaded failed");
+        event.target.src = require(placeHolder)
+      }} /> :
+      <Item.Image
+        src={placeHolder} />
+    }
 
     <Item.Content>
       <Item.Header as="a" src={report.url}>

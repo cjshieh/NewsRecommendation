@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { Card, Label, Image } from "semantic-ui-react";
 import { Markup } from "interweave";
 import { newsActions } from "../../actions";
+import placeHolder from "../../assets/LogoMakr_9Pcd4O.png";
 import "./news_card.css";
 
 class NewsCard extends React.Component {
@@ -27,7 +28,7 @@ class NewsCard extends React.Component {
         onClick={() =>
           this.handleClick(this.props.report.url, this.props.report.digest)
         }>
-        <Image src={this.props.report.urlToImage} />
+        <Image src={this.props.report.urlToImage ? this.props.report.urlToImage: placeHolder} />
         <Card.Content>
           <Card.Header as="h3" className="fade">
             <Markup content={this.props.report.title} />
