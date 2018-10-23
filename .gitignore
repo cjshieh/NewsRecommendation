@@ -35,3 +35,6 @@ learn_jupyter/
 
 # ignore IDE setting
 .vscode/
+
+# ignore server config
+server_config.ini
