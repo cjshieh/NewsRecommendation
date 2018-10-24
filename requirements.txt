@@ -1,5 +1,6 @@
-newspaper3k
+# newspaper3k
 numpy
+pandas
 pika
 python-dateutil
 python-jsonrpc
