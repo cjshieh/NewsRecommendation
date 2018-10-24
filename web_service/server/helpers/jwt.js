@@ -10,7 +10,9 @@ function jwt() {
     "/users/authenticate",
     "/users/register",
     "/news/default",
-    /\/news\/search*/
+    /\/news\/search*/,
+    "/favicon.ico",
+    "/"
   ];
   return expressJwt({ secret, isRevoked }).unless({
     // public routes that don't require authentication
