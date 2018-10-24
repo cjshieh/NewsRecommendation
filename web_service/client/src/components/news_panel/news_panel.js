@@ -78,7 +78,7 @@ class NewsPanel extends Component {
   }
 
   handleScroll() {
-    if (this.props.toggle.visible) {
+    if (this.props.interaction.drawer_visible) {
       return;
     }
     let scrollY =
@@ -86,7 +86,7 @@ class NewsPanel extends Component {
       window.pageYOffset ||
       document.documentElement.scrollTop;
 
-    if (window.innerHeight + scrollY >= document.body.offsetHeight - 50) {
+    if (window.innerHeight + scrollY >= document.body.offsetHeight - 200) {
       this.loadMoreNews();
     }
   }
@@ -210,7 +210,7 @@ class NewsPanel extends Component {
   }
 }
 
-function mapStateToProps({ toggle, loader, authentication }) {
+function mapStateToProps({ interaction, loader, authentication }) {
   const { loggedIn } = authentication;
   const newsForUser = loader[newsClass.USER]["news"];
   const allLoadedForUser = loader[newsClass.USER]["allLoaded"];
@@ -224,7 +224,7 @@ function mapStateToProps({ toggle, loader, authentication }) {
     newsDefault,
     newsForUser,
     results,
-    toggle
+    interaction
   };
 }
 
