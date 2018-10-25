@@ -7,7 +7,7 @@ export const newsActions = {
     loadNewsByDefault,
     loadByPageForUser,
     loadBySearchKey,
-    requestSearch,
+    loadRequest,
     storeBehaviour
     // TODO: add these two actions
     //loadByCategory,
@@ -19,9 +19,10 @@ function clearSearchResult() {
     }
 }
 
-function requestSearch() {
+function loadRequest(category) {
     return {
-        type: newsConstants.SEARCH_REQUEST
+        type: newsConstants.LOAD_REQUEST,
+        data: {class: category}
     }
 }
 

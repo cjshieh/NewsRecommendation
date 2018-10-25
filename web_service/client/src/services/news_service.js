@@ -10,7 +10,7 @@ export const newsService = {
 };
 
 const baseUrl = "http://localhost:3000";
-function loadNewsByDefault() {
+async function loadNewsByDefault() {
   const uri = `${baseUrl}/news/default`;
   const requestOptions = {
     method: "GET",
@@ -18,17 +18,15 @@ function loadNewsByDefault() {
     cache: 'no-cache'
   };
   const request = new Request(encodeURI(uri), requestOptions);
-  return fetch(request)
-    .then(handleResponse)
-    .then(news => {
-      return {
-        class: newsClass.DEFAULT,
-        news
-      };
-    });
+  const response = await fetch(request);
+  const news = await handleResponse(response);
+  return {
+    class: newsClass.DEFAULT,
+    news
+  };
 }
 
-function loadByPageForUser(pageNum) {
+async function loadByPageForUser(pageNum) {
   const user = JSON.parse(localStorage.getItem("user"));
   // console.log(user);
   const username = user ? user.username : "";
@@ -39,22 +37,20 @@ function loadByPageForUser(pageNum) {
     cache: 'no-cache'
   };
   const request = new Request(encodeURI(uri), requestOptions);
-  return fetch(request)
-    .then(handleResponse)
-    .then(news => {
-      if (!news || news.length === 0) {
-        return {
-          class: newsClass.USER,
-          allLoaded: true,
-          news: []
-        };
-      }
-      return {
-        class: newsClass.USER,
-        allLoaded: false,
-        news
-      };
-    });
+  const response = await fetch(request);
+  const news = await handleResponse(response);
+  if (!news || news.length === 0) {
+    return {
+      class: newsClass.USER,
+      allLoaded: true,
+      news: []
+    };
+  }
+  return {
+    class: newsClass.USER,
+    allLoaded: false,
+    news
+  };
 }
 
 function loadByCategory(category) {
@@ -62,7 +58,7 @@ function loadByCategory(category) {
   return;
 }
 
-function loadBySearchKey(queryKey, pageNum) {
+async function loadBySearchKey(queryKey, pageNum) {
   const spaceless = queryKey.trim();
   // Normalized text without any punctuation and extra spaces betwen words
   const punctuationless = spaceless.replace(/^[.,/#!$%^&*;:{}=\-_`~()]/g,"");
@@ -79,14 +75,12 @@ function loadBySearchKey(queryKey, pageNum) {
     cache: 'no-cache'
   };
   const request = new Request(encodeURI(uri), requestOptions);
-  return fetch(request)
-    .then(handleResponse)
-    .then(news => {
-      return {
-        class: newsClass.SEARCH,
-        news
-      };
-    });
+  const response = await fetch(request);
+  const news = await handleResponse(response);
+  return {
+    class: newsClass.SEARCH,
+    news
+  };
 }
 
 function storeBehaviour(newsId) {

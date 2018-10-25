@@ -3,6 +3,7 @@ import _ from "lodash";
 import { connect } from "react-redux";
 import { interActions, userActions, newsActions } from "../../actions/index";
 import { Button, Dropdown, Form, Icon, Image, Input } from "semantic-ui-react";
+import { newsClass } from "../../constants";
 import Logo from "../../assets/Logo.png";
 import "./menu.css";
 import { bindActionCreators } from "redux";
@@ -28,7 +29,7 @@ class Menu extends React.Component {
   componentDidMount() {
     if (this.props.location.pathname === "/result") {
       // console.log(this.props.location);
-      this.props.requestSearch();
+      this.props.loadRequest(newsClass.SEARCH);
       const queryKey = this.props.location.search.match(/\?q=(.+)/i)[1];
       this.setState({ term: queryKey });
       this.props.loadBySearchKey(queryKey);
@@ -62,7 +63,7 @@ class Menu extends React.Component {
       return;
     }
     this.props.clearSearch();
-    this.props.requestSearch();
+    this.props.loadRequest(newsClass.SEARCH);
     this.props.loadBySearchKey(queryKey);
     // this.setState({isHidden: !this.props.isHidden});
     this.props.history.push(`/result?q=${queryKey}`);
@@ -163,7 +164,7 @@ function mapDispatchToProps(dispatch) {
       hideSearchBar: interActions.hideSearchMobie,
       logout: userActions.logout,
       loadBySearchKey: newsActions.loadBySearchKey,
-      requestSearch: newsActions.requestSearch,
+      loadRequest: newsActions.loadRequest,
       toggleDrawer: interActions.toggleDrawer,
       toggleSearchBar: interActions.toggleSearchMobie
     },

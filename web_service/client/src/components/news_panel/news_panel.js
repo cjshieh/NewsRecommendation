@@ -29,6 +29,13 @@ class NewsPanel extends Component {
     if (this.props.location.pathname === "/result") {
       this.setState({ showResult: true });
     }
+    // first we do request news
+    this.props.dispatch(
+      this.props.loggedIn
+        ? newsActions.loadRequest(newsClass.USER)
+        : newsActions.loadRequest(newsClass.DEFAULT)
+    );
+
     // if user is not logged in, we won't provide infinite scroll service
     if (!this.props.loggedIn) {
       this.props.dispatch(newsActions.loadNewsByDefault());
@@ -44,17 +51,20 @@ class NewsPanel extends Component {
     // watch for whether a user is logged out
     if (!this.props.loggedIn && this.props.loggedIn !== prevProps.loggedIn) {
       // console.log("someone is logged out");
+      this.props.dispatch(newsActions.loadRequest(newsClass.DEFAULT));
       this.props.dispatch(newsActions.loadNewsByDefault());
       // reset pageNum to 1
       this.setState({ pageNum: 1 });
       return;
     }
-    if (this.props.location !== prevProps.location) {
-      this.props.dispatch(
-        this.props.loggedIn
-          ? newsActions.loadByPageForUser()
-          : newsActions.loadNewsByDefault()
-      );
+    if (
+      this.props.location.pathname === "/" &&
+      this.props.location !== prevProps.location
+    ) {
+      this.props.dispatch(newsActions.loadRequest(newsClass.DEFAULT));
+      this.props.loggedIn
+        ? this.loadMoreNews()
+        : this.props.dispatch(newsActions.loadNewsByDefault());
     }
   }
 
@@ -141,7 +151,7 @@ class NewsPanel extends Component {
 
   render() {
     if (
-      this.props.loadingSearch ||
+      this.props.loadingNews ||
       (!this.props.newsDefault && !this.props.newsForUser)
     ) {
       this.disableScroll();
@@ -216,11 +226,14 @@ function mapStateToProps({ interaction, loader, authentication }) {
   const allLoadedForUser = loader[newsClass.USER]["allLoaded"];
   const newsDefault = loader[newsClass.DEFAULT]["news"];
   const results = loader[newsClass.SEARCH]["news"];
-  const loadingSearch = loader[newsClass.SEARCH]["loading"];
+  const loadingNews =
+    loader[newsClass.SEARCH]["loading"] ||
+    loader[newsClass.USER]["loading"] ||
+    loader[newsClass.DEFAULT]["loading"];
   return {
     allLoadedForUser,
     loggedIn,
-    loadingSearch,
+    loadingNews,
     newsDefault,
     newsForUser,
     results,

@@ -6,11 +6,11 @@ export function loader(state = createInit(), action) {
   const nextState = { ...state };
   switch (action.type) {
     case newsConstants.LOAD_SUCCESS: {
+      Object.keys(nextState).forEach(type => nextState[type]["loading"] = false);
       if (action.data.class === newsClass.DEFAULT) {
         nextState[newsClass.DEFAULT]["news"] = action.data.news;
         return nextState;
       } else if (action.data.class === newsClass.SEARCH) {
-        nextState[newsClass.SEARCH]["loading"] = false;
         nextState[newsClass.SEARCH]["loaded"] = true;
       }
       nextState[action.data.class]["news"] = concatNews(
@@ -23,9 +23,8 @@ export function loader(state = createInit(), action) {
       nextState[newsClass.USER]["allLoaded"] = true;
       return nextState;
     }
-    case newsConstants.SEARCH_REQUEST: {
-      console.log("should change state");
-      nextState[newsClass.SEARCH]["loading"] = true;
+    case newsConstants.LOAD_REQUEST: {
+      nextState[action.data.class]["loading"] = true;
       return nextState;
     }
     case newsConstants.CLEAR_REQUEST: {
@@ -54,10 +53,11 @@ function concatNews(prevState, data) {
 function createInit() {
   const initialState = {};
   initialState[newsClass.USER] = {
+    loading: false,
     allLoaded: false,
     news: {}
   };
   initialState[newsClass.SEARCH] = { loading: false, loaded: false, news: {} };
-  initialState[newsClass.DEFAULT] = { news: [] };
+  initialState[newsClass.DEFAULT] = { loading: false, news: [] };
   return initialState;
 }
