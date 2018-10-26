@@ -79,6 +79,7 @@ async function loadBySearchKey(queryKey, pageNum) {
   const news = await handleResponse(response);
   return {
     class: newsClass.SEARCH,
+    allLoaded: news.length === 0,
     news
   };
 }

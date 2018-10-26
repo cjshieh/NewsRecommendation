@@ -51,7 +51,7 @@ function loadBySearchKey(query, pageNum = 1) {
     dispatch(request(newsClass.SEARCH));
     newsService.loadBySearchKey(query, pageNum).then(
       data => {
-        dispatch(success(data));
+        data.allLoaded ? dispatch(done(data)) : dispatch(success(data));
       },
       error => {
         dispatch(failure(error.toString()));
@@ -59,6 +59,10 @@ function loadBySearchKey(query, pageNum = 1) {
       }
     );
   };
+
+  function done(data) {
+    return { type: newsConstants.LOAD_ALL_SUCCESS, data };
+  }
 
   function request(type) {
     return { type: newsConstants.LOAD_REQUEST, payload: type };
@@ -76,7 +80,7 @@ function loadByPageForUser(pageNum = 1) {
     dispatch(request(newsClass.USER));
     newsService.loadByPageForUser(pageNum).then(
       data => {
-        data.allLoaded ? dispatch(done()) : dispatch(success(data));
+        data.allLoaded ? dispatch(done(data)) : dispatch(success(data));
       },
       error => {
         dispatch(failure(error.toString()));
@@ -85,8 +89,8 @@ function loadByPageForUser(pageNum = 1) {
     );
   };
 
-  function done() {
-    return { type: newsConstants.LOAD_ALL_SUCCESS };
+  function done(data) {
+    return { type: newsConstants.LOAD_ALL_SUCCESS, data };
   }
   function request(type) {
     return { type: newsConstants.LOAD_REQUEST, payload: type };

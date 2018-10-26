@@ -21,7 +21,9 @@ export function loader(state = createInit(), action) {
       return nextState;
     }
     case newsConstants.LOAD_ALL_SUCCESS: {
-      nextState[newsClass.USER]["allLoaded"] = true;
+      nextState[action.data.class]["allLoaded"] = true;
+      nextState[action.data.class]["loading"] = false;
+      nextState[newsConstants.FIRST_LOAD_REQUEST] = false;
       return nextState;
     }
     case newsConstants.LOAD_REQUEST: {
@@ -30,10 +32,6 @@ export function loader(state = createInit(), action) {
     }
     case newsConstants.FIRST_LOAD_REQUEST: {
       nextState[newsConstants.FIRST_LOAD_REQUEST] = true;
-      return nextState;
-    }
-    case newsConstants.LOAD_REQUEST: {
-      nextState[action.data.class]["loading"] = true;
       return nextState;
     }
     case newsConstants.CLEAR_REQUEST: {
@@ -67,7 +65,12 @@ function createInit() {
     allLoaded: false,
     news: {}
   };
-  initialState[newsClass.SEARCH] = { loading: false, loaded: false, news: {} };
+  initialState[newsClass.SEARCH] = {
+    loading: false,
+    loaded: false,
+    allLoaded: false,
+    news: {}
+  };
   initialState[newsClass.DEFAULT] = { news: [] };
   return initialState;
 }

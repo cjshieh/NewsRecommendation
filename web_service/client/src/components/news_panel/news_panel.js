@@ -42,43 +42,31 @@ class NewsPanel extends Component {
     window.addEventListener("scroll", _.throttle(this.handleScroll, 500));
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     // watch for whether a user is logged out
     if (!this.props.loggedIn && this.props.loggedIn !== prevProps.loggedIn) {
-      // console.log("someone is logged out");
       this.props.dispatch(newsActions.loadFirstRequest());
       this.props.dispatch(newsActions.loadNewsByDefault());
       // reset pageNum to 1
       this.setState({ pageNum: 1 });
       return;
     }
-    if (
-      this.props.location.pathname === "/" &&
-      this.props.location !== prevProps.location
-    ) {
-      this.props.dispatch(newsActions.loadFirstRequest());
-      this.props.loggedIn
-        ? this.loadMoreNews()
-        : this.props.dispatch(newsActions.loadNewsByDefault());
-    }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.location !== this.props.location) {
-      // reset pageNum
-      console.log("reset pageNum");
+    // if page routes, clear and request load
+    if (this.props.location !== prevProps.location) {
       this.setState({ pageNum: 1 });
-      // if routing to search result, show it
-      if (nextProps.location.pathname === "/result") {
-        // console.log("Show results");
+      if (this.props.location.pathname === "/result") {
         this.setState({ showResult: true });
         return;
       } else {
-        console.log("page transfer, clear");
-        // handle the user browsing from search to user
         this.props.dispatch(newsActions.clearSearchResult());
         this.setState({ showResult: false });
+        this.props.dispatch(newsActions.loadFirstRequest());
       }
+    }
+    // we need to dispatch action in here since we update state on location changes
+    if(!this.state.showResult && this.state.showResult !== prevState.showResult) {
+      this.props.loggedIn ?
+        this.loadMoreNews() : this.props.dispatch(newsActions.loadNewsByDefault()); 
     }
   }
 
@@ -92,7 +80,7 @@ class NewsPanel extends Component {
       document.documentElement.scrollTop;
 
     if (window.innerHeight + scrollY >= document.body.offsetHeight - 500) {
-      if(this.props.loadingNews) {
+      if (this.props.loadingNews) {
         return;
       }
       this.loadMoreNews();
@@ -158,7 +146,7 @@ class NewsPanel extends Component {
     return (
       <Container className="yu-news-panel">
         {this.renderNews()}
-        {!this.props.loggedIn && this.showEndingMessage()}
+        {this.showEndingMessage()}
         {this.props.loadingNews && <Spiner firstLoad={false} />}
       </Container>
     );
@@ -176,7 +164,10 @@ class NewsPanel extends Component {
         );
       }
     }
-    if (this.props.newsDefault.length !== 0 || !zeroResults) {
+    if (
+      !this.props.loggedIn &&
+      (this.props.newsDefault.length !== 0 || !zeroResults)
+    ) {
       return (
         <Segment vertical className="panel-message">
           Want More? Please&#160;
@@ -223,13 +214,16 @@ class NewsPanel extends Component {
 function mapStateToProps({ interaction, loader, authentication }) {
   const { loggedIn } = authentication;
   const newsForUser = loader[newsClass.USER]["news"];
-  const allLoadedForUser = loader[newsClass.USER]["allLoaded"];
+  const allLoaded =
+    loader[newsClass.USER]["allLoaded"] ||
+    loader[newsClass.SEARCH]["allLoaded"];
   const newsDefault = loader[newsClass.DEFAULT]["news"];
   const results = loader[newsClass.SEARCH]["news"];
   const firstLoadingNews = loader[newsConstants.FIRST_LOAD_REQUEST];
-  const loadingNews = loader[newsClass.SEARCH]["loading"] || loader[newsClass.USER]["loading"];
+  const loadingNews =
+    loader[newsClass.SEARCH]["loading"] || loader[newsClass.USER]["loading"];
   return {
-    allLoadedForUser,
+    allLoaded,
     firstLoadingNews,
     loggedIn,
     loadingNews,
