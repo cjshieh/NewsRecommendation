@@ -55,34 +55,6 @@ class App extends Component {
                   </Menu.Item>
                 </Menu.Menu>
               </Menu.Item>
-              {/*
-              <Menu.Item>
-                <Menu.Header>Category</Menu.Header>
-                <Menu.Menu>
-                  <Menu.Item as={Link} to="/business">
-                    <Icon name="briefcase" />
-                    Business
-                  </Menu.Item>
-                  <Menu.Item as="a">
-                    <Icon name="futbol outline" />
-                    Sports
-                  </Menu.Item>
-                  <Menu.Item as="a">
-                    <Icon name="cubes" />
-                    Tech
-                  </Menu.Item>
-                  <Menu.Item as="a">
-                    <Icon name="heartbeat" />
-                    Health
-                  </Menu.Item>
-                </Menu.Menu>
-              </Menu.Item>
-*/}
-              {/*
-              <Menu.Item as="div" style={{ height: "15em" }}>
-                Powers by NEWS API
-              </Menu.Item>
-*/}
             </Sidebar>
 
             <Sidebar.Pusher dimmed={visible}>

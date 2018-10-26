@@ -8,7 +8,7 @@ import NewsFeed from "../news_feed/news_feed";
 import Spiner from "../util/spinner";
 import "./news_panel.css";
 
-import { newsClass } from "../../constants";
+import { newsClass, newsConstants } from "../../constants";
 import { newsActions } from "../../actions";
 
 class NewsPanel extends Component {
@@ -30,11 +30,7 @@ class NewsPanel extends Component {
       this.setState({ showResult: true });
     }
     // first we do request news
-    this.props.dispatch(
-      this.props.loggedIn
-        ? newsActions.loadRequest(newsClass.USER)
-        : newsActions.loadRequest(newsClass.DEFAULT)
-    );
+    this.props.dispatch(newsActions.loadFirstRequest());
 
     // if user is not logged in, we won't provide infinite scroll service
     if (!this.props.loggedIn) {
@@ -43,15 +39,14 @@ class NewsPanel extends Component {
     }
 
     this.loadMoreNews();
-    this.loadMoreNews = _.debounce(this.loadMoreNews, 1000);
-    window.addEventListener("scroll", this.handleScroll);
+    window.addEventListener("scroll", _.throttle(this.handleScroll, 500));
   }
 
   componentDidUpdate(prevProps) {
     // watch for whether a user is logged out
     if (!this.props.loggedIn && this.props.loggedIn !== prevProps.loggedIn) {
       // console.log("someone is logged out");
-      this.props.dispatch(newsActions.loadRequest(newsClass.DEFAULT));
+      this.props.dispatch(newsActions.loadFirstRequest());
       this.props.dispatch(newsActions.loadNewsByDefault());
       // reset pageNum to 1
       this.setState({ pageNum: 1 });
@@ -61,7 +56,7 @@ class NewsPanel extends Component {
       this.props.location.pathname === "/" &&
       this.props.location !== prevProps.location
     ) {
-      this.props.dispatch(newsActions.loadRequest(newsClass.DEFAULT));
+      this.props.dispatch(newsActions.loadFirstRequest());
       this.props.loggedIn
         ? this.loadMoreNews()
         : this.props.dispatch(newsActions.loadNewsByDefault());
@@ -96,7 +91,10 @@ class NewsPanel extends Component {
       window.pageYOffset ||
       document.documentElement.scrollTop;
 
-    if (window.innerHeight + scrollY >= document.body.offsetHeight - 200) {
+    if (window.innerHeight + scrollY >= document.body.offsetHeight - 500) {
+      if(this.props.loadingNews) {
+        return;
+      }
       this.loadMoreNews();
     }
   }
@@ -151,24 +149,26 @@ class NewsPanel extends Component {
 
   render() {
     if (
-      this.props.loadingNews ||
+      this.props.firstLoadingNews ||
       (!this.props.newsDefault && !this.props.newsForUser)
     ) {
       this.disableScroll();
-      return <Spiner />;
+      return <Spiner firstLoad={true} />;
     }
     return (
       <Container className="yu-news-panel">
         {this.renderNews()}
-        {this.showEndingMessage()}
+        {!this.props.loggedIn && this.showEndingMessage()}
+        {this.props.loadingNews && <Spiner firstLoad={false} />}
       </Container>
     );
   }
 
   showEndingMessage() {
-    // TODO: if the length of search result is < 20 don't show
+    let zeroResults = true;
     if (this.state.showResult) {
-      if (Object.keys(this.props.results).length === 0) {
+      zeroResults = Object.keys(this.props.results).length === 0;
+      if (zeroResults) {
         return (
           <Segment vertical className="panel-message">
             No results
@@ -176,7 +176,7 @@ class NewsPanel extends Component {
         );
       }
     }
-    if (!this.props.loggedIn && this.props.newsDefault.length !== 0) {
+    if (this.props.newsDefault.length !== 0 || !zeroResults) {
       return (
         <Segment vertical className="panel-message">
           Want More? Please&#160;
@@ -226,12 +226,11 @@ function mapStateToProps({ interaction, loader, authentication }) {
   const allLoadedForUser = loader[newsClass.USER]["allLoaded"];
   const newsDefault = loader[newsClass.DEFAULT]["news"];
   const results = loader[newsClass.SEARCH]["news"];
-  const loadingNews =
-    loader[newsClass.SEARCH]["loading"] ||
-    loader[newsClass.USER]["loading"] ||
-    loader[newsClass.DEFAULT]["loading"];
+  const firstLoadingNews = loader[newsConstants.FIRST_LOAD_REQUEST];
+  const loadingNews = loader[newsClass.SEARCH]["loading"] || loader[newsClass.USER]["loading"];
   return {
     allLoadedForUser,
+    firstLoadingNews,
     loggedIn,
     loadingNews,
     newsDefault,

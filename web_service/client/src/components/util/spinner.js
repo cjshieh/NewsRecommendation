@@ -1,9 +1,9 @@
 import React from "react";
 import "./spinner.css";
 
-const spinner = () => {
+const spinner = ({firstLoad}) => {
   return (
-    <div className="spiner-container">
+    <div className={firstLoad ? "spiner-container full" : "spiner-container"}>
       <div className="row">
         <div className="lds-dual-ring" />
         <div className="content">Loading...</div>

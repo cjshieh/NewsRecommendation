@@ -6,7 +6,8 @@ export function loader(state = createInit(), action) {
   const nextState = { ...state };
   switch (action.type) {
     case newsConstants.LOAD_SUCCESS: {
-      Object.keys(nextState).forEach(type => nextState[type]["loading"] = false);
+      nextState[newsConstants.FIRST_LOAD_REQUEST] = false;
+      nextState[action.data.class]["loading"] = false;
       if (action.data.class === newsClass.DEFAULT) {
         nextState[newsClass.DEFAULT]["news"] = action.data.news;
         return nextState;
@@ -21,6 +22,14 @@ export function loader(state = createInit(), action) {
     }
     case newsConstants.LOAD_ALL_SUCCESS: {
       nextState[newsClass.USER]["allLoaded"] = true;
+      return nextState;
+    }
+    case newsConstants.LOAD_REQUEST: {
+      nextState[action.payload]["loading"] = true;
+      return nextState;
+    }
+    case newsConstants.FIRST_LOAD_REQUEST: {
+      nextState[newsConstants.FIRST_LOAD_REQUEST] = true;
       return nextState;
     }
     case newsConstants.LOAD_REQUEST: {
@@ -52,12 +61,13 @@ function concatNews(prevState, data) {
 
 function createInit() {
   const initialState = {};
+  initialState[newsConstants.FIRST_LOAD_REQUEST] = false;
   initialState[newsClass.USER] = {
     loading: false,
     allLoaded: false,
     news: {}
   };
   initialState[newsClass.SEARCH] = { loading: false, loaded: false, news: {} };
-  initialState[newsClass.DEFAULT] = { loading: false, news: [] };
+  initialState[newsClass.DEFAULT] = { news: [] };
   return initialState;
 }
