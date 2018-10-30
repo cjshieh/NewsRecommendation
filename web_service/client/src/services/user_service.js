@@ -6,7 +6,7 @@ export const userService = {
   //   update
 };
 
-const baseUrl = "http://localhost:3000";
+// const baseUrl = "http://localhost:3000";
 function login(username, password) {
   const requestOptions = {
     method: "POST",
@@ -14,7 +14,7 @@ function login(username, password) {
     body: JSON.stringify({ username, password })
   };
 
-  return fetch(`${baseUrl}/users/authenticate`, requestOptions)
+  return fetch(encodeURI('/users/authenticate'), requestOptions)
     .then(handleResponse)
     .then(user => {
       // login successful if there's a jwt token in the response
@@ -38,7 +38,7 @@ function getById(id) {
     // headers: authHeader()
   };
 
-  return fetch(`${baseUrl}/users/${id}`, requestOptions).then(handleResponse);
+  return fetch(encodeURI(`/users/${id}`), requestOptions).then(handleResponse);
 }
 
 function register(user) {
@@ -48,7 +48,7 @@ function register(user) {
     body: JSON.stringify(user)
   };
 
-  return fetch(`${baseUrl}/users/register`, requestOptions)
+  return fetch(encodeURI('/users/register'), requestOptions)
     .then(handleResponse)
     .then(user => {
       if (user.token) {
@@ -57,16 +57,6 @@ function register(user) {
       return user;
     });
 }
-
-// function update(user) {
-//     const requestOptions = {
-//         method: 'PUT',
-//         // headers: { ...authHeader(), 'Content-Type': 'application/json' },
-//         body: JSON.stringify(user)
-//     };
-
-//     return fetch(`${baseUrl}/users/${user.id}`, requestOptions).then(handleResponse);;
-// }
 
 function handleResponse(response) {
   return response.text().then(text => {

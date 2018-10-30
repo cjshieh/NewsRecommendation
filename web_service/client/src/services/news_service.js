@@ -9,9 +9,9 @@ export const newsService = {
   storeBehaviour
 };
 
-const baseUrl = "http://localhost:3000";
+// const baseUrl = "http://localhost:3000";
 async function loadNewsByDefault() {
-  const uri = `${baseUrl}/news/default`;
+  const uri = `/news/default`;
   const requestOptions = {
     method: "GET",
     headers: { "Content-Type": "application/json" },
@@ -30,7 +30,7 @@ async function loadByPageForUser(pageNum) {
   const user = JSON.parse(localStorage.getItem("user"));
   // console.log(user);
   const username = user ? user.username : "";
-  const uri = `${baseUrl}/news/userId/${username}/pageNum/${pageNum}`;
+  const uri = `/news/userId/${username}/pageNum/${pageNum}`;
   const requestOptions = {
     method: "GET",
     headers: authHeader(),
@@ -68,7 +68,7 @@ async function loadBySearchKey(queryKey, pageNum) {
     return;
   }
   
-  const uri = `${baseUrl}/news/search/q/${finalQuery}/pageNum/${pageNum}`;
+  const uri = `/news/search/q/${finalQuery}/pageNum/${pageNum}`;
   const requestOptions = {
     method: "GET",
     headers: { "Content-Type": "application/json" },
@@ -88,7 +88,7 @@ function storeBehaviour(newsId) {
   const user = JSON.parse(localStorage.getItem("user"));
   // console.log(user);
   const username = user ? user.username : "";
-  const uri = `${baseUrl}/news/userId/${username}/newsId/${newsId}`;
+  const uri = `/news/userId/${username}/newsId/${newsId}`;
   const requestOptions = {
     method: "POST",
     headers: authHeader()
@@ -103,7 +103,6 @@ function handleResponse(response) {
       const error = (data && data.message) || response.statusText;
       return Promise.reject(error);
     }
-    console.log(data);
     return data.result;
   });
 }
