@@ -2,7 +2,6 @@ import React from "react";
 import { connect } from "react-redux";
 import { alertActions, userActions } from "../../actions";
 import SignUpForm from "./signup_form";
-import { createBrowserHistory } from 'history';
 
 class SignUpPage extends React.Component {
   constructor(props) {
@@ -17,12 +16,12 @@ class SignUpPage extends React.Component {
         confirm_password: ""
       }
     };
-    const history = createBrowserHistory();
-    history.listen(() => {
-      this.props.dispatch(alertActions.clear());
-    });
     this.processForm = this.processForm.bind(this);
     this.changeUser = this.changeUser.bind(this);
+  }
+
+  componentDidMount() {
+    this.props.dispatch(alertActions.clear());
   }
 
   // Pre-submission.

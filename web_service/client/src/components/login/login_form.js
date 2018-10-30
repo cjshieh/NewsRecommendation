@@ -46,6 +46,13 @@ const LoginForm = ({ onSubmit, onChange, errors }) => {
                 onChange={onChange}
                 required
               />
+              <Message>
+                <Message.Header>Demo Account</Message.Header>
+                <Message.List>
+                  <Message.Item>E-mail address: hello@123.com</Message.Item>
+                  <Message.Item>Password: 1234</Message.Item>
+                </Message.List>
+              </Message>
               <Message
                 className={errors.type ? "errorMsg" : ""}
                 // style={{display: "block"}}
